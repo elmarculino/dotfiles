@@ -1,0 +1,4 @@
+.cfg
+
+# Ignore the installed plugins
+.vim/plugged/**

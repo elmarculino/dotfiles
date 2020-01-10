@@ -40,6 +40,16 @@ alias rskde='killall plasmashell; kstart plasmashell; exit'
 alias jtags='ctags -R ./* && sed -i "" -E "/^(if|switch|function|module\.exports|it|describe).+language:js$/d" tags'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'''
 
+# Fasd aliases
+alias a='fasd -a'        # any
+alias s='fasd -si'       # show / search / select
+alias d='fasd -d'        # directory
+alias f='fasd -f'        # file
+alias sd='fasd -sid'     # interactive directory selection
+alias sf='fasd -sif'     # interactive file selection
+alias z='fasd_cd -d'     # cd, same functionality as j in autojump
+alias zz='fasd_cd -d -i' # cd with interactive selection
+alias v='f -e vim'       # quick opening files with vim
 
 # set autoload path
 fpath=(~/.zsh "${fpath[@]}")
@@ -66,6 +76,11 @@ export PYSPARK_PYTHON=/opt/anaconda/anaconda3/envs/ml/bin/python
 # Swift
 export PATH=/opt/swift/usr/bin:$PATH
 
+# nvm - Node Version Manager
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # ~/.local/bin
 export PATH=$PATH:~/.local/bin
 export PATH=$PATH:/snap/bin
@@ -75,7 +90,7 @@ export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --reverse'
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
+eval "$(fasd --init auto)"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

@@ -50,9 +50,44 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
+
+(require 'prettier-js)
 (add-hook 'js2-mode-hook 'prettier-js-mode)
 
-;; My Key Bidings
-(map! :ne "M-/" #'comment-or-uncomment-region)
-(map! :desc "Search file with fzf" :ne "SPC s z" #'counsel-fzf)
-(map! :desc "Ripgrep project files" :ne "SPC s r" #'counsel-projectile-rg)
+(add-hook 'prog-mode-hook 'evil-lion-mode)
+
+;; Functions
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+;; Keybindings
+(with-eval-after-load 'evil-maps
+  (map!
+   :niv "C-M-k"  #'move-line-up
+   :niv "C-M-j"  #'move-line-down
+   :n "z l"      #'hs-hide-level
+   :ne "M-/"     #'comment-or-uncomment-region
+   :ne "SPC s z" #'counsel-fzf
+   :ne "SPC s r" #'counsel-projectile-rg
+   :nvie "C-h"   #'evil-window-left
+   :nvie "C-j"   #'evil-window-down
+   :nvie "C-k"   #'evil-window-up
+   :nvie "C-l"   #'evil-window-right))
+
+;; allows company-mode to take care of org-mode completion.
+(defun add-pcomplete-to-capf ()
+    (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+    (add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+

@@ -52,5 +52,4 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 (package! prettier-js)
-;; (package! origami)
-;; (package! deadgrep)
+(package! evil-lion)

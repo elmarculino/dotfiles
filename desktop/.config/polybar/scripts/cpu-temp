@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#installed acip for this
+
+ICON="~/Downloads/24px.svg"
+tmp=$(sensors | awk '$1 == "Tctl:" {print $2; exit;}' | sed 's\[+]\\g')
+echo $tmp

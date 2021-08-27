@@ -1,0 +1,4 @@
+#!/bin/bash
+
+tmp=$(nvidia-smi --format=csv --query-gpu=temperature.gpu | sed -n 2p)
+echo "$tmp.0°C"

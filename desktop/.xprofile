@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# This file runs when a DM logs you into a graphical session.
+# If you use startx/xinit like a Chad, this file will also be sourced.
+
+# determines if a program is installed
+is_installed() { command -v "$1" >/dev/null 2>&1; }
+
+# determines if a program is running
+is_running() { pgrep -f "$1" >/dev/null 2>&1; }
+
+# starts a backgrounded process if not already running
+start() { is_installed "$1" && ! is_running "$1" && "$@" >/dev/null 2>&1 & }
+
+# starts a backgrounded process or sends USR1 if already running
+start_or_restart() {
+  if is_running "$1"; then
+    pkill -USR1 "$1"
+  elif is_installed "$1"; then
+    "$@" &
+  fi
+}
+
+# run the remaps script, switching caps/esc and more
+[ -f "$HOME/.local/bin/remaps" ] && "$HOME/.local/bin/remaps"
+# set the background with the `setbg` script
+[ -f "$HOME/.local/bin/setbg" ] && "$HOME/.local/bin/setbg"
+# lock screen with xsecurelock
+[ -f "$HOME/.local/bin/setscreensaver" ] && "$HOME/.local/bin/setscreensaver"
+compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
+start dunst              # dunst for notifications
+start unclutter         # Remove mouse when idle
+start copyq
+start nm-applet
+
+#[ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
+# [ -f "$HOME/.config/polybar/start.sh" ] && "$HOME/.config/polybar/start.sh" &
+# sxhkd &
+
+# [ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
+start_or_restart sxhkd
+start_or_restart polybar classic
+exec bspwm

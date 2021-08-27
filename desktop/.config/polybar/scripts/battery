@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#installed acip for this
+
+ICON="~/Downloads/24px.svg"
+tmp=$(acpi)
+time=$(echo $tmp | cut -d "," -f 3)
+per=$(echo $tmp | cut -d "," -f 2)
+echo tmp : $tmp
+dunstify -t 2000 -r 2593 -u normal "Battery" "$per, $time"

@@ -51,7 +51,7 @@ font-2 = "Jam\-icons:style=Regular:size=11;4"
 
 modules-left = bspwm
 modules-center = xwindow
-modules-right = xkeyboard cpu-temp gpu-temp eth cpu memory alsa date line
+modules-right = xkeyboard eth cpu memory alsa date line
 
 tray-position = right
 tray-padding = 6

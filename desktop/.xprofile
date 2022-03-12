@@ -30,6 +30,7 @@ start_or_restart() {
 compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
 start dunst              # dunst for notifications
 start unclutter         # Remove mouse when idle
+start flameshot
 start copyq
 start nm-applet
 

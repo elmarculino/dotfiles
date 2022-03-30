@@ -51,7 +51,7 @@ font-2 = "Jam\-icons:style=Regular:size=11;4"
 
 modules-left = bspwm
 modules-center = xwindow
-modules-right = xkeyboard eth cpu memory alsa date line
+modules-right = xkeyboard cpu memory battery alsa date line
 
 tray-position = right
 tray-padding = 6
@@ -285,7 +285,7 @@ format-volume = <ramp-volume> <label-volume>
 label-volume = %percentage%%
 label-volume-foreground = ${root.foreground}
 
-label-muted = 
+label-muted = 􀊠
 label-muted-foreground = ${colors.foreground}
 
 ramp-volume-0 = 􀊠
@@ -298,13 +298,13 @@ type = internal/alsa
 
 format-volume = <ramp-volume> <label-volume>
 glabel-volume = %percentage%
-label-muted = 
+label-muted = 􀊠
 label-muted-foreground = ${colors.foreground}
 
-ramp-volume-0 = 
-ramp-volume-1 = 
-ramp-volume-2 = 
-ramp-volume-3 = 
+ramp-volume-0 = 􀊠
+ramp-volume-1 = 􀊤
+ramp-volume-2 = 􀊦
+ramp-volume-3 = 􀊦
 
 [module/cpu-temp]
 type = custom/script
@@ -336,19 +336,25 @@ interval = 3600
 type = internal/battery
 battery = BAT0
 adapter = AC
-full-at = 100
+full-at = 99
+
+label-full = %percentage%%
+format-full = 􀋦<label-full>
+format-full-prefix-foreground = #FFFFFF
+
+label-charging = %percentage%% %time%
+format-charging = <label-charging>
+
+label-discharging = %percentage%% %time%
+format-discharging = 􀋥<label-discharging>
 
 time-format = %H:%M
 
-label-charging = 􀋥
 ; format-charging = %{A1:$HOME/.config/polybar/scripts/battery:}<label-charging>%{A}
-format-charging = <label-charging>
+;format-charging = <label-charging>
 
 ; format-discharging = %{A1:$HOME/.config/polybar/scripts/battery:}<ramp-capacity>%{A}
-format-discharging = <ramp-capacity>
-
-format-full = 􀋦
-format-full-prefix-foreground = #FFFFFF
+;format-discharging = <ramp-capacity>
 
 ramp-capacity-0 = 􀒂
 ramp-capacity-1 = 􀊼

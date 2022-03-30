@@ -51,7 +51,7 @@ alias ....='cd ../../../../'
 alias .....='cd ../../../../'
 alias cf='cd $(fd -td | fzf)'
 alias cp='cp -iv'
-alias mv='mv -iv'
+#alias mv='mv -iv'
 alias rm='rm -v'
 alias ls='ls -hNF --color=auto --group-directories-first'
 alias ll='ls -lh'
@@ -90,7 +90,7 @@ export PATH=$PATH:$JAVA_HOME/bin
 # Spark
 export SPARK_HOME=/opt/spark
 export PATH=$PATH:$SPARK_HOME/bin
-export PYSPARK_PYTHON=/home/marco/anaconda3/envs/spark/bin/python
+export PYSPARK_PYTHON=/opt/anaconda/anaconda3/envs/fastai/bin/python
 #export PYSPARK_DRIVER_PYTHON=jupyter
 #export PYSPARK_DRIVER_PYTHON_OPTS=notebook
 
@@ -161,3 +161,5 @@ fp() {
 
 source ~/.config/broot/launcher/bash/br
 source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
+alias k=kubectl
+compdef __start_kubectl k

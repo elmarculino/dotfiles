@@ -1,0 +1,7 @@
+#!/bin/bash
+getmount() {
+    vm="$(vboxmanage list vms | awk '{print $1}'| tr -d \" | dmenu -i -p "Select VM:")" || exit 1
+    vboxmanage startvm "$vm"
+}
+
+getmount

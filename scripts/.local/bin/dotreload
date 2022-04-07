@@ -1,0 +1,9 @@
+#!/bin/bash
+reloadfolder() {
+    cd $HOME/.dotfiles
+    folder="$(ls -d */ | tr -d / | dmenu -i -p "Select folder:")" || exit 1
+    stow -D $folder
+    stow $folder
+}
+
+reloadfolder

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+alacritty --command zsh -l -c "ranger"

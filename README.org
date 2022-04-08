@@ -1,10 +1,9 @@
-#+TITLE: dotfiles
+#+TITLE: .dotfiles
 
-* .dotfiles
 These are my dotfiles. I use Stow to manage the symlinks in my home folder.
 
 ** How to
-To add the synlinks in one of the folders
+To add the synlinks of one the folders
 #+begin_src bash
 stow bin
 #+end_src

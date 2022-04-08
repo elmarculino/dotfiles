@@ -57,7 +57,7 @@ alias ls='ls -hNF --color=auto --group-directories-first'
 alias ll='ls -lh'
 alias cpv='rsync -ah --info=progress2'
 alias mkd='mkdir -pv'
-alias r='source ranger'       # source will  drop you in the last visited folder when you exit
+alias r='TERM=xterm source ranger'       # source will  drop you in the last visited folder when you exit
 alias c='clear'
 alias yt='youtube-dl --add-metadata -i'
 alias yta='yt -x -f bestaudio/best'
@@ -74,13 +74,16 @@ alias keys="xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf \"%-3s
 # Fasd aliases
 alias a='fasd -a'        # any
 alias s='fasd -si'       # show / search / select
-alias d='fasd -d'        # directory
+#alias d='fasd -d'        # directory
 alias f='fasd -f'        # file
 alias sd='fasd -sid'     # interactive directory selection
 alias sf='fasd -sif'     # interactive file selection
 alias z='fasd_cd -d'     # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
-alias v='f -e vim'       # quick opening files with vim
+alias v='f -e nvim'       # quick opening files with vim
+
+function d { folder=$(fasd -dR | awk '{print $2}' | fzf) && cd "$folder" }
+function vv { file=$(fasd -fR | awk '{print $2}' | fzf) && nvim "$file" }
 
 # JDK
 #export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
@@ -126,7 +129,7 @@ export TERM=screen-256color
 # export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
 # export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --reverse'
 export FZF_DEFAULT_COMMAND='fd --type f'
-export FZF_DEFAULT_OPTS="--layout=reverse --inline-info"
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --inline-info"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(fasd --init auto)"

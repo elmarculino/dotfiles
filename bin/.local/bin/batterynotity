@@ -1,0 +1,14 @@
+#!/bin/bash
+
+battery_path="/sys/class/power_supply/BAT0/"
+if [ -e "$battery_path" ]; then
+    battery_status=$(cat $battery_path/status)
+    if [ "$battery_status" == "Discharging" ]; then
+        battery_level=$(cat $battery_path/capacity)
+        if [ "$battery_level" -le 20 ]; then
+            notify-send -t 5000 -u normal "Battery Low" "Level: ${battery_level}%"
+        elif [ "$battery_level" -le 10 ]; then
+            notify-send -t 5000 -u critical "Battery Very Low" "Level: ${battery_level}%"
+        fi
+    fi
+fi

@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# Dim the screen after three minutes of inactivity, lock the screen two minutes later using xsecurelock
-xset s 180 120
-XSECURELOCK_DIM_COLOR="#1a1b26" XSECURELOCK_PASSWORD_PROMPT=time_hex XSECURELOCK_FONT="Hack Nerd
-Font Mono" xss-lock -l -- xsecurelock &
+export XSECURELOCK_PASSWORD_PROMPT=time_hex 
+export XSECURELOCK_FONT="Hack Nerd Font Mono" 
+export XSECURELOCK_BLANK_DPMS_STATE=off
+export XSECURELOCK_KEY_XF86Tools_COMMAND="sleep 0.5; xset dpms force off"
+
+# Dim the screen after three minutes of inactivity and lock using xsecurelock
+xset s 180 5
+xss-lock -l -- xsecurelock &

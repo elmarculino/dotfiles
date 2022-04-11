@@ -21,24 +21,34 @@ start_or_restart() {
   fi
 }
 
-# run the remaps script, switching caps/esc and more
-[ -f "$HOME/.local/bin/remaps" ] && "$HOME/.local/bin/remaps"
-# set the background with the `setbg` script
-[ -f "$HOME/.local/bin/setbg" ] && "$HOME/.local/bin/setbg"
-# lock screen with xsecurelock
-[ -f "$HOME/.local/bin/setscreensaver" ] && "$HOME/.local/bin/setscreensaver"
-compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
-start dunst              # dunst for notifications
-start unclutter         # Remove mouse when idle
-start flameshot
-start copyq
-start nm-applet
+start_bspwm () {
+    # run the remaps script, switching caps/esc and more
+    [ -f "$HOME/.local/bin/remaps" ] && "$HOME/.local/bin/remaps"
+    # set the background with the `setbg` script
+    [ -f "$HOME/.local/bin/setbg" ] && "$HOME/.local/bin/setbg"
+    # lock screen with xsecurelock
+    [ -f "$HOME/.local/bin/setscreensaver" ] && "$HOME/.local/bin/setscreensaver"
+    compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
+    start dunst              # dunst for notifications
+    start unclutter         # Remove mouse when idle
+    start flameshot
+    start copyq
+    start nm-applet
 
-#[ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
-# [ -f "$HOME/.config/polybar/start.sh" ] && "$HOME/.config/polybar/start.sh" &
-# sxhkd &
+    #[ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
+    # [ -f "$HOME/.config/polybar/start.sh" ] && "$HOME/.config/polybar/start.sh" &
+    # sxhkd &
 
-# [ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
-start_or_restart sxhkd
-start_or_restart polybar classic
-exec bspwm
+    # [ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
+    start_or_restart sxhkd
+    start_or_restart polybar classic
+    exec bspwm
+}
+
+session=${1:-bspwm}
+
+case $session in
+    bspwm           ) start_bspwm;;
+    kde             ) exec startplasma-x11;;
+    *               ) exec $1;;
+esac

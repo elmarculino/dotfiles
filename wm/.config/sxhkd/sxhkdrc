@@ -176,7 +176,7 @@ super + s : {h,j,k,l}
 
 # Brightness
 XF86MonBrightness{Up,Down}
-    brightnessctl s 10%{+,-}
+    brightnessctl s 4800{+,-}
 
 # Volume
 XF86Audio{Raise,Lower}Volume

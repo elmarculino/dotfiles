@@ -68,22 +68,45 @@ alias up='sudo apt update && sudo apt upgrade -y'
 alias ss='ss $1'
 alias rskde='killall plasmashell; kstart plasmashell; exit'
 alias jtags='ctags -R ./* && sed -i "" -E "/^(if|switch|function|module\.exports|it|describe).+language:js$/d" tags'
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias keys="xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf \"%-3s %s\n\", \$5, \$8 }'"
+alias startkde="startx ~/.xinitrc kde"
 
 # Fasd aliases
 alias a='fasd -a'        # any
 alias s='fasd -si'       # show / search / select
-#alias d='fasd -d'        # directory
 alias f='fasd -f'        # file
 alias sd='fasd -sid'     # interactive directory selection
 alias sf='fasd -sif'     # interactive file selection
-alias z='fasd_cd -d'     # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
-alias v='f -e nvim'       # quick opening files with vim
+
+alias d >/dev/null && unalias d
+alias v >/dev/null && unalias v
+alias vd >/dev/null && unalias vd
+alias z >/dev/null && unalias z
 
 function d { folder=$(fasd -dR | awk '{print $2}' | fzf) && cd "$folder" }
 function vv { file=$(fasd -fR | awk '{print $2}' | fzf) && nvim "$file" }
+
+# edit given file or search in recently used files
+function v {
+    local file
+    test -e "$1" && $EDITOR "$@" && return
+    file=$(fasd -Rfl "$*" | fzf) && $EDITOR "${file}" || $EDITOR "$@"
+}
+
+# cd into the directory containing a recently used file
+function vd {
+    local dir
+    local file
+    file=$(fasd -Rfl "$*" | fzf) && dir=$(dirname "$file") && cd "$dir"
+}
+
+# cd into given dir or search in recently used dirs
+function z {
+    [ $# -eq 1 ] && test -d "$1" && cd "$1" && return
+    local dir
+    dir=$(fasd -Rdl "$*" | fzf) && cd "${dir}" || return 1
+}
 
 # JDK
 #export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/

@@ -31,14 +31,13 @@ start_bspwm () {
     # launch polybar
     [ -f "$HOME/.config/polybar/launch.sh" ] && "$HOME/.config/polybar/launch.sh" &
 
-    compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
-    start dunst              # dunst for notifications
-    start unclutter         # Remove mouse when idle
-    start flameshot
-    start copyq
-    start nm-applet
-
-    start_or_restart sxhkd
+    compton --config ~/.config/compton/compton.conf &
+    start dunst                 # Dunst for notifications
+    start unclutter             # Remove mouse when idle
+    start flameshot             # Printscreen app
+    start copyq                 # Clipboard manager
+    start nm-applet             # NetworkManager applet
+    start_or_restart sxhkd      # Simple X hotkey daemon
     exec bspwm
 }
 

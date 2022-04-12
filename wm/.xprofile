@@ -28,6 +28,9 @@ start_bspwm () {
     [ -f "$HOME/.local/bin/setbg" ] && "$HOME/.local/bin/setbg"
     # lock screen with xsecurelock
     [ -f "$HOME/.local/bin/setscreensaver" ] && "$HOME/.local/bin/setscreensaver"
+    # launch polybar
+    [ -f "$HOME/.config/polybar/launch.sh" ] && "$HOME/.config/polybar/launch.sh" &
+
     compton --config ~/.config/compton/compton.conf -b --dbus --backend glx --paint-on-overlay &
     start dunst              # dunst for notifications
     start unclutter         # Remove mouse when idle
@@ -35,13 +38,7 @@ start_bspwm () {
     start copyq
     start nm-applet
 
-    #[ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
-    # [ -f "$HOME/.config/polybar/start.sh" ] && "$HOME/.config/polybar/start.sh" &
-    # sxhkd &
-
-    # [ -f "$HOME/.config/bspwm/bspwmrc" ] && . "$HOME/.config/bspwm/bspwmrc"
     start_or_restart sxhkd
-    start_or_restart polybar classic
     exec bspwm
 }
 

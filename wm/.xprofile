@@ -31,7 +31,7 @@ start_bspwm () {
     # launch polybar
     [ -f "$HOME/.config/polybar/launch.sh" ] && "$HOME/.config/polybar/launch.sh" &
 
-    compton --config ~/.config/compton/compton.conf &
+    picom --config ~/.config/picom/picom.conf &
     start dunst                 # Dunst for notifications
     start unclutter             # Remove mouse when idle
     start flameshot             # Printscreen app

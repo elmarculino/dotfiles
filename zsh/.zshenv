@@ -1,5 +1,3 @@
-. "$HOME/.cargo/env"
-
 typeset -U PATH path
 
 # Other XDG paths

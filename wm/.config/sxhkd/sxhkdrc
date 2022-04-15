@@ -21,7 +21,7 @@ super + Return
 
 # program launcher
 super + @space
-    dmenu_run -nb '#141C21' -sf '#141C21' -sb '#33C5BA' -nf '#93A1A1' -fn "Iosevka Nerd Font:size=10"
+    dmenu_run -nb '#141C21' -sf '#141C21' -sb '#33C5BA' -nf '#93A1A1' -h 26 -fn "Iosevka Nerd Font:size=10"
 
 # open rofi program laucher
 alt + @space
@@ -180,6 +180,7 @@ XF86MonBrightness{Up,Down}
 
 # Volume
 XF86Audio{Raise,Lower}Volume
-    amixer -D pulse sset Master 5%{+,-}
+    pactl set-sink-volume @DEFAULT_SINK@ {+,-}5%
+
 XF86AudioMute
-    amixer -D pulse set Master toggle
+    pactl set-sink-mute @DEFAULT_SINK@ toggle

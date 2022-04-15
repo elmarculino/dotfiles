@@ -46,9 +46,10 @@ setopt histignorealldups sharehistory
 function ss(){ ssh mribeiro@$1 }
 
 alias ..='cd ..'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
+alias ...='cd ../../'
+alias ....='cd ../../../'
 alias .....='cd ../../../../'
+alias ......='cd ../../../../../'
 alias cf='cd $(fd -td | fzf)'
 alias cp='cp -iv'
 #alias mv='mv -iv'
@@ -108,6 +109,8 @@ function z {
     dir=$(fasd -Rdl "$*" | fzf) && cd "${dir}" || return 1
 }
 
+docker_prune() { docker system prune --volumes -fa }
+
 # JDK
 #export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -139,14 +142,11 @@ export PATH=$PATH:$SQOOP_HOME/bin
 export PATH=/opt/swift/usr/bin:$PATH
 
 # nvm - Node Version Manager
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$HOME/.local/share/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export NODE_PATH=$(npm root -g)
-
-# ~/.local/bin
-export PATH=$PATH:~/.local/bin
 
 export TERM=screen-256color
 # export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
@@ -189,3 +189,5 @@ source ~/.config/broot/launcher/bash/br
 source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
 alias k=kubectl
 compdef __start_kubectl k
+
+source /home/marco/.config/broot/launcher/bash/br

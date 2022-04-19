@@ -37,7 +37,7 @@ super + Escape
 
 # browser launcher
 super + w
-    brave-browser
+    brave
 
 # printscreen
 Print
@@ -184,3 +184,6 @@ XF86Audio{Raise,Lower}Volume
 
 XF86AudioMute
     pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+XF86AudioPlay
+    playerctl -a play-pause

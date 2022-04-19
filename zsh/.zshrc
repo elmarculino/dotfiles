@@ -185,9 +185,7 @@ fp() {
     zathura "$file" > /dev/null &
 }
 
-source ~/.config/broot/launcher/bash/br
+source $HOME/.config/broot/launcher/bash/br
 source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
 alias k=kubectl
 compdef __start_kubectl k
-
-source /home/marco/.config/broot/launcher/bash/br

@@ -3,6 +3,7 @@
 export XSECURELOCK_PASSWORD_PROMPT=time_hex 
 export XSECURELOCK_FONT="Iosevka Nerd Font"
 export XSECURELOCK_BLANK_DPMS_STATE=off
+export XSECURELOCK_KEY_XF86Tools_COMMAND="sleep 0.5; xset dpms force off"
 export XSECURELOCK_COMPOSITE_OBSCURER=0
 
 # Dim the screen after three minutes of inactivity and lock using xsecurelock

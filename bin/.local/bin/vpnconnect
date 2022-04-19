@@ -1,0 +1,11 @@
+#!/bin/bash
+
+conn=$(nmcli -t -f name,type connection | grep vpn | cut -d':' -f 1 | dmenu -i -p "Select network:")
+result=$(nmcli connection up $conn 2>&1)
+status=$?
+
+if test $status -eq 0; then
+    notify-send "Success" "$result"
+else
+    notify-send -t 5000 -u critical "Error" "$result"
+fi

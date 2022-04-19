@@ -1,0 +1,25 @@
+#!/bin/bash
+ssid=$(nmcli -f SSID device wifi list | awk 'NR>1 && !a[$0]++ && !/--/' | sed "s/ *$//g" | dmenu -i -p "Select network:")
+
+connect() {
+    if [ -z $1 ]; then
+        result=$(nmcli device wifi connect $ssid 2>&1)
+    else
+        result=$(nmcli device wifi connect $ssid password $pw 2>&1)
+    fi
+
+    status=$?
+
+    if test $status -eq 0; then
+        if grep -q "Error.*Secrets" <<< "$result"; then
+            pw=$("$HOME/.local/bin/dpass") && connect $pw
+        else
+            notify-send "Success" "$result"
+        fi
+    else
+        notify-send -t 5000 -u critical "Error" "$result"
+    fi
+
+}
+
+connect

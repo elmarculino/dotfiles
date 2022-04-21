@@ -3,24 +3,6 @@
 # This file runs when a DM logs you into a graphical session.
 # If you use startx/xinit like a Chad, this file will also be sourced.
 
-# determines if a program is installed
-is_installed() { command -v "$1" >/dev/null 2>&1; }
-
-# determines if a program is running
-is_running() { pgrep -f "$1" >/dev/null 2>&1; }
-
-# starts a backgrounded process if not already running
-start() { is_installed "$1" && ! is_running "$1" && "$@" >/dev/null 2>&1 & }
-
-# starts a backgrounded process or sends USR1 if already running
-start_or_restart() {
-  if is_running "$1"; then
-    pkill -USR1 "$1"
-  elif is_installed "$1"; then
-    "$@" &
-  fi
-}
-
 start_bspwm () {
     # run the remaps script, switching caps/esc and more
     [ -f "$HOME/.local/bin/remaps" ] && "$HOME/.local/bin/remaps"
@@ -31,13 +13,14 @@ start_bspwm () {
     # launch polybar
     [ -f "$HOME/.config/polybar/launch.sh" ] && "$HOME/.config/polybar/launch.sh" &
 
-    picom --config ~/.config/picom/picom.conf &
-    start dunst                 # Dunst for notifications
-    start unclutter             # Remove mouse when idle
-    start flameshot             # Printscreen app
-    start copyq                 # Clipboard manager
-    start nm-applet             # NetworkManager applet
-    start_or_restart sxhkd      # Simple X hotkey daemon
+    setsid -f picom --config ~/.config/picom/picom.conf 
+
+    autostart="dunst unclutter sxhkd flameshot copyq"
+
+    for program in $autostart; do
+            pidof -s "$program" || setsid -f "$program"
+    done >/dev/null 2>&1
+
     exec bspwm
 }
 

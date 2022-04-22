@@ -1,0 +1,11 @@
+[Unit]
+Description=Job to monitor  battery level and status
+
+[Service]
+Type=simple
+ExecStart=/home/marco/.local/bin/batterynotity
+Environment="DISPLAY=:0.0"
+Environment="XDG_RUNTIME_DIR=/run/user/1000"
+
+[Install]
+WantedBy=default.target

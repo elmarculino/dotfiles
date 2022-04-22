@@ -8,7 +8,7 @@ if [ -e "$battery_path" ]; then
         if [ "$battery_level" -le 20 ]; then
             notify-send -t 5000 -u normal "Battery Low" "Level: ${battery_level}%"
         elif [ "$battery_level" -le 10 ]; then
-            notify-send -t 5000 -u critical "Battery Very Low" "Level: ${battery_level}%.Computer will suspend automatically if battery level reaches 5%."
+            notify-send -t 5000 -u critical "Battery Very Low" "Level: ${battery_level}%. Computer will suspend automatically if battery level reaches 5%."
         elif [ "$battery_level" -le 5 ]; then
             systemctl suspend
         fi

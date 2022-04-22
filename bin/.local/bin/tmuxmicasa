@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+session=micasa
+
+if ! tmux has-session -t=$session 2> /dev/null; then
+    tmux new-session -ds $session -n jupyter -c ~/micasa 
+    tmux send-keys -t $session 'conda activate fastai' Enter
+    tmux send-keys -t $session 'jupyter lab' Enter
+    tmux neww -n vim -t $session -c ~/micasa
+fi
+

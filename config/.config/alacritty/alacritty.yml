@@ -108,20 +108,21 @@ window:
   #multiplier: 3
 
 # Font configuration
+
 font:
   normal:
-    family: SourceCodePro
+    family: MonoLisa
     style: Regular
 
   bold:
-    family: SourceCodePro
+    family: MonoLisa
     style: Bold
 
   italic:
-    family: SourceCodePro
+    family: MonoLisa
     style: Italic
 
-  size: 12.0
+  size: 10.5
 
   # Offset is the extra space around each character. `offset.y` can be thought
   # of as modifying the line spacing, and `offset.x` as modifying the letter

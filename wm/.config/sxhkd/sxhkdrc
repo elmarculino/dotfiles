@@ -39,17 +39,30 @@ super + Escape
 super + w
     brave
 
+# editor launcher
+super + e
+    emacs
+
 # printscreen
 Print
     flameshot gui
 
 # show help
-super + question
-    sxhkd-help
+super + alt + h
+    bspc rule -a \* -o state=floating rectangle=810x500+278+125 && alacritty --title 'Shortcuts' -e less "$HOME/.config/sxhkd/sxhkdrc"
 
 # lock screen
 ctrl + alt + l
     loginctl lock-session
+
+# scripts shortcuts
+super + alt + {b,p,k}
+    { \
+    setbg $HOME/images, \
+    polybarstart, \
+    remaps \
+    }
+
 
 #
 # bspwm hotkeys
@@ -124,6 +137,23 @@ super + {_,shift + }{1-9,0}
 # Rotate tree
 super + {period, slash}
     bspc node @/ -C {forward,backward}
+
+#
+# Manipulate the workspace
+#
+
+# Rotate all windows {counter-}clockwise by 90 degrees.
+super + {_,shift + }r
+    bspc node @/ --rotate {90,-90}
+
+# Flip desktop
+super + alt + shift + r
+	bspc node @/ --rotate 180
+
+# Dynamic gaps.
+super + shift + bracket{left,right}
+    bspc config -d focused window_gap "$(( $(bspc config -d focused window_gap) {-,+} 5 ))"
+
 
 #
 # preselect

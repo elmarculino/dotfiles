@@ -1,0 +1,14 @@
+[Unit]
+Description=Jupyter Notebook
+
+[Service]
+Type=simple
+PIDFile=/run/jupyter.pid
+ExecStart=/bin/bash -f "conda activate fastai; jupyter-lab --notebook-dir=/home/marco/micasa"
+User=marco
+Group=marco
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -18,7 +18,10 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Source Code Pro" :size 14))
+(setq doom-font (font-spec :family "MonoLisa" :size 14))
+(custom-set-faces!
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -27,6 +30,7 @@
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/org/")
+(setq org-roam-directory "~/org/notes")
 
 ;; If you want to change the style of line numbers, change this to `relative' or
 ;; `nil' to disable it:
@@ -61,6 +65,12 @@
       deft-extensions '("org" "txt")
       deft-recursive t)
 
+(with-eval-after-load "ispell"
+  (setq ispell-program-name "hunspell")
+  (setq ispell-dictionary "en_US,pt_BR")
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "en_US,pt_BR"))
+
 ;; Functions
 (defun move-line-up ()
   "Move up the current line."
@@ -77,6 +87,13 @@
   (forward-line -1)
   (indent-according-to-mode))
 
+(after! org
+  (map! :map org-mode-map
+        :n "m-j" #'org-metadown
+        :n "m-k" #'org-metaup))
+
+(setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●"))
+
 ;; Keybindings
 (with-eval-after-load 'evil-maps
   (map!
@@ -88,6 +105,7 @@
    ;;:ne "SPC s x" #'counsel-projectile-rg
    :ne "SPC s x" #'consult-ripgrep
    :ne "SPC c p" #'prettier-js
+   :ne "SPC m X" #'(org-hugo-export-wim-to-md :all-subtrees)
    :nvie "C-h"   #'evil-window-left
    :nvie "C-j"   #'evil-window-down
    :nvie "C-k"   #'evil-window-up

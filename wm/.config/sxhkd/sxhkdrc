@@ -48,7 +48,7 @@ Print
     flameshot gui
 
 # show help
-super + alt + h
+ctrl + alt + h
     bspc rule -a \* -o state=floating rectangle=810x500+278+125 && alacritty --title 'Shortcuts' -e less "$HOME/.config/sxhkd/sxhkdrc"
 
 # lock screen
@@ -56,11 +56,12 @@ ctrl + alt + l
     loginctl lock-session
 
 # scripts shortcuts
-super + alt + {b,p,k}
+super + alt + {i,p,m,b}
     { \
     setbg $HOME/images, \
     polybarstart, \
     remaps \
+    budsconnect \
     }
 
 
@@ -104,7 +105,7 @@ super + ctrl + {m,x,y,z}
 # focus/swap
 #
 
-# focus the node in the given direction
+# focus/move the node in the given direction
 super + {_,shift + }{h,j,k,l}
     bspc node -{f,s} {west,south,north,east}
 
@@ -114,7 +115,7 @@ super + {p,b,comma,period}
 
 # focus the next/previous node in the current desktop
 super + {_,shift + }c
-    bspc node -f {next,prev}.local
+    bspc node -f {next,prev}.local.!hidden.window
 
 # focus the next/previous desktop in the current monitor
 super + bracket{left,right}
@@ -196,7 +197,7 @@ super + {Left,Down,Up,Right}
     bspc node -v {-20 0,0 20,0 -20,20 0}
 
 super + @equal
-     bspc node {@/,@parent} {--equalize,--balance}
+    bspc node {@/,@parent} {--equalize,--balance}
 
 # Expand/contract a window by moving one of its side outward/inward
 super + s : {h,j,k,l}

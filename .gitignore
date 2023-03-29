@@ -1,2 +1,9 @@
 # Ignore the installed plugins
-.vim/plugged/**
+emacs/.emacs.d
+vim/.vim/plugged
+zsh/.zsh/fsh
+zsh/.zsh/pure
+zsh/.zsh/zsh-autocomplete
+zsh/.zsh/zsh-autosuggestions
+
+.git

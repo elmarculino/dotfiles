@@ -42,6 +42,7 @@ HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
 setopt histignorealldups sharehistory
+setopt HIST_IGNORE_SPACE
 
 function ss(){ ssh mribeiro@$1 }
 
@@ -54,7 +55,7 @@ alias cf='cd $(fd -td | fzf)'
 alias cp='cp -iv'
 #alias mv='mv -iv'
 alias rm='rm -v'
-alias ls='ls -hNF --color=auto --group-directories-first'
+#alias ls='ls -hNF --color=auto --group-directories-first'
 alias ll='ls -lh'
 alias cpv='rsync -ah --info=progress2'
 alias mkd='mkdir -pv'
@@ -71,6 +72,39 @@ alias rskde='killall plasmashell; kstart plasmashell; exit'
 alias jtags='ctags -R ./* && sed -i "" -E "/^(if|switch|function|module\.exports|it|describe).+language:js$/d" tags'
 alias keys="xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf \"%-3s %s\n\", \$5, \$8 }'"
 alias startkde="startx ~/.xinitrc kde"
+alias mtar='tar -zcvf' # mtar <archive_compress>
+alias utar='tar -zxvf' # utar <archive_decompress> <file_list>
+alias zip='zip -r' # z <archive_compress> <file_list>
+alias uz='unzip' # uz <archive_decompress> -d <dir>
+alias sr='source ~/.zshrc'
+alias psg="ps aux | grep -v grep | grep -i -e VSZ -e" 
+alias mkdir="mkdir -p"
+alias fm='ranger'
+alias pacs="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
+alias pars="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
+alias pacr="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
+alias p="pacman -Q | fzf"
+alias wifi="nmtui-connect"
+alias ls="exa --color=auto --icons"
+alias l="ls -l"
+alias la="ls -a"
+alias lla="ls -la"
+alias lt="ls --tree"
+alias cat="bat --color always --plain"
+alias grep='grep --color=auto'
+alias t="tmux"
+alias ta="tmux a"
+alias duf="du -sh * | sort -hr"
+alias conda="micromamba"
+
+# DOCKER
+alias d-ra='docker rmi -f $(docker images -aq)' # Remove all images
+alias d-rav='docker rm -vf $(docker ps -aq)'    # Remove all volumes
+alias d-sac='docker stop $(docker ps -a -q)'    # Stop all containers
+alias d-rac='docker rm -f $(docker ps -a -q)'   # Remove all containers
+alias d-srac='d-sac && d-rac'                   # Stop and remove all containers
+alias d-sp='docker system prune -af --volumes'  # Remove entire docker system
+
 
 # Fasd aliases
 alias a='fasd -a'        # any
@@ -111,15 +145,21 @@ function z {
 
 docker_prune() { docker system prune --volumes -fa }
 
+# GO
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
 # JDK
-#export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 export PATH=$PATH:$JAVA_HOME/bin
 
 # Spark
 export SPARK_HOME=/opt/spark
 export PATH=$PATH:$SPARK_HOME/bin
-export PYSPARK_PYTHON=/opt/anaconda/anaconda3/envs/fastai/bin/python
+#export PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
+export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
+export PYSPARK_PYTHON=/opt/micromamba/envs/etl/bin/python
+export PYSPARK_DRIVER_PYTHON=/opt/micromamba/envs/etl/bin/python
 #export PYSPARK_DRIVER_PYTHON=jupyter
 #export PYSPARK_DRIVER_PYTHON_OPTS=notebook
 
@@ -131,46 +171,46 @@ export HADOOP_COMMON_HOME=$HADOOP_HOME
 export HADOOP_HDFS_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+export HADOOP_SSH_OPTS="-p 22"
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 export YARN_HOME=$HADOOP_HOME
 
+# Hive
+export HIVE_HOME=/opt/hive
+export PATH=$PATH:$HIVE_HOME/bin
+export CLASSPATH=$CLASSPATH:$HADOOP_HOME/lib/*:.
+export CLASSPATH=$CLASSPATH:$HIVE_HOME/lib/*:.
+
+# Derbi
+export DERBY_HOME=/opt/derby
+export PATH=$PATH:$DERBY_HOME/bin
+export CLASSPATH=$CLASSPATH:$DERBY_HOME/lib/derby.jar:$DERBY_HOME/lib/derbytools.jar
+
+
 # Sqoop
-export SQOOP_HOME=/opt/sqoop
-export PATH=$PATH:$SQOOP_HOME/bin
+# export SQOOP_HOME=/opt/sqoop
+# export PATH=$PATH:$SQOOP_HOME/bin
 
 # Swift
 export PATH=/opt/swift/usr/bin:$PATH
 
-# nvm - Node Version Manager
-export NVM_DIR="$HOME/.local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-export NODE_PATH=$(npm root -g)
-
 export TERM=screen-256color
 # export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden'
 # export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --reverse'
-export FZF_DEFAULT_COMMAND='fd --type f'
+# export FZF_DEFAULT_COMMAND="fd . $HOME"
+# export FZF_DEFAULT_COMMAND='fd --type file'
+# export FZF_DEFAULT_COMMAND='fd --type file --hidden --exclude .git'
+export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --inline-info"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(fasd --init auto)"
+eval "$(thefuck --alias)"
+eval "$(fnm env --use-on-cd)"
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/anaconda/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+export NODE_PATH=$(npm root -g)
 
 fp() {
     RG_PREFIX="rga --rga-adapters=poppler --files-with-matches"
@@ -189,3 +229,31 @@ source $HOME/.config/broot/launcher/bash/br
 source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
 alias k=kubectl
 compdef __start_kubectl k
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba init' !!
+export MAMBA_EXE="/home/marco/.local/bin/micromamba";
+export MAMBA_ROOT_PREFIX="/opt/micromamba";
+__mamba_setup="$('/home/marco/.local/bin/micromamba' shell hook --shell zsh --prefix '/opt/micromamba' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    if [ -f "/opt/micromamba/etc/profile.d/micromamba.sh" ]; then
+        . "/opt/micromamba/etc/profile.d/micromamba.sh"
+    else
+        export  PATH="/opt/micromamba/bin:$PATH"  # extra space after export prevents interference from conda init
+    fi
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/marco/source/google-cloud-sdk/path.zsh.inc' ]; then . '/home/marco/source/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/marco/source/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/marco/source/google-cloud-sdk/completion.zsh.inc'; fi
+
+# pnpm
+export PNPM_HOME="/home/marco/.local/share/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end

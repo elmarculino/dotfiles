@@ -1,0 +1,52 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+# A wifi choosing script using nmcli
+connect(){
+    nmcli radio wifi on;
+    nmcli dev wifi rescan;
+    #sed "s/ *$//g" in order to remove the ending spaces produced by nmcli
+    CHOSEN="refresh"
+    while [ $CHOSEN = "refresh" ]
+    do
+    LIST=$(nmcli -f SSID dev wifi list | tail -n +2 | sed "s/ *$//g")
+    CHOSEN=$(echo "$LIST\nrefresh"| rofi -dmenu -i -p "Choose Wifi");
+    done
+    RESULT=$(nmcli dev wifi connect $CHOSEN)
+    while echo "$RESULT" | grep "Error";
+    do 
+	if echo "$RESULT" | grep "Secrets";
+	then
+	    PASSWORD=$(rofi -dmenu -p "Password");
+	    RESULT=$(nmcli dev wifi connect $CHOSEN password $PASSWORD | grep "Error.*Secrets" ;) 
+	else
+	    echo "$RESULT" | rofi -dmenu
+	fi
+    done
+}
+forget(){
+    CHOSEN=$(nmcli -f NAME con | tail -n +2 | sed "s/ *$//g" | rofi -dmenu -i -p "Choose Wifi")
+    nmcli connection delete id $CHOSEN
+}
+turnoff(){
+    nmcli radio wifi off
+}
+
+if nmcli con show | grep "wlan0";
+then
+    CONNECTED=$(nmcli con show | grep " wlan0" | awk '{print $1}');
+    OPTION=$(echo "current: ${CONNECTED}\nconnect\nforget\nturn off"|rofi -dmenu -i -p "Options");
+else
+    OPTION=$(echo "connect\nforget\nturn off"|rofi -dmenu -i -p "Options");
+fi
+case "$OPTION" in
+    connect)
+	connect
+	;;
+    forget)
+	forget
+	;;
+    "turn off")
+	turnoff
+	;;
+esac

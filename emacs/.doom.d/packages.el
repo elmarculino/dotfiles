@@ -57,3 +57,4 @@
 (package! nvm)
 (package! typit)
 (package! affe)
+(package! org-download)

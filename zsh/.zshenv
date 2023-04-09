@@ -25,3 +25,4 @@ export PAGER="less"
 export WM="bspwm"
 
 
+. "$HOME/.cargo/env"

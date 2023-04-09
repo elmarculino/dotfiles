@@ -1,3 +1,0 @@
-#!/bin/sh
-
-setxkbmap -layout us -variant colemak_dh -option caps:escape_shifted_capslock

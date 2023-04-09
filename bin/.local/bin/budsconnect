@@ -1,3 +1,0 @@
-#!/bin/bash
-
-bluetoothctl disconnect A0:AC:69:1D:5D:09 && bluetoothctl connect A0:AC:69:1D:5D:09

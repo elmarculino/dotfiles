@@ -96,15 +96,7 @@ alias t="tmux"
 alias ta="tmux a"
 alias duf="du -sh * | sort -hr"
 alias conda="micromamba"
-
-# DOCKER
-alias d-ra='docker rmi -f $(docker images -aq)' # Remove all images
-alias d-rav='docker rm -vf $(docker ps -aq)'    # Remove all volumes
-alias d-sac='docker stop $(docker ps -a -q)'    # Stop all containers
-alias d-rac='docker rm -f $(docker ps -a -q)'   # Remove all containers
-alias d-srac='d-sac && d-rac'                   # Stop and remove all containers
-alias d-sp='docker system prune -af --volumes'  # Remove entire docker system
-
+alias vim="nvim"
 
 # Fasd aliases
 alias a='fasd -a'        # any
@@ -149,15 +141,19 @@ docker_prune() { docker system prune --volumes -fa }
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
+# JAVA
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+export PATH="/opt/homebrew/opt/maven/bin:$PATH"
+
 # JDK
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
+export JAVA_HOME=/opt/homebrew/opt/openjdk@11
 export PATH=$PATH:$JAVA_HOME/bin
 
 # Spark
 export SPARK_HOME=/opt/spark
 export PATH=$PATH:$SPARK_HOME/bin
 #export PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
-export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
+#export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 export PYSPARK_PYTHON=/opt/micromamba/envs/etl/bin/python
 export PYSPARK_DRIVER_PYTHON=/opt/micromamba/envs/etl/bin/python
 #export PYSPARK_DRIVER_PYTHON=jupyter
@@ -226,34 +222,27 @@ fp() {
 }
 
 source $HOME/.config/broot/launcher/bash/br
-source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
+#source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
 alias k=kubectl
 compdef __start_kubectl k
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE="/home/marco/.local/bin/micromamba";
-export MAMBA_ROOT_PREFIX="/opt/micromamba";
-__mamba_setup="$('/home/marco/.local/bin/micromamba' shell hook --shell zsh --prefix '/opt/micromamba' 2> /dev/null)"
+export MAMBA_EXE="/opt/homebrew/opt/micromamba/bin/micromamba";
+export MAMBA_ROOT_PREFIX="/Users/msoares/micromamba";
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__mamba_setup"
 else
-    if [ -f "/opt/micromamba/etc/profile.d/micromamba.sh" ]; then
-        . "/opt/micromamba/etc/profile.d/micromamba.sh"
+    if [ -f "/Users/msoares/micromamba/etc/profile.d/micromamba.sh" ]; then
+        . "/Users/msoares/micromamba/etc/profile.d/micromamba.sh"
     else
-        export  PATH="/opt/micromamba/bin:$PATH"  # extra space after export prevents interference from conda init
+        export  PATH="/Users/msoares/micromamba/bin:$PATH"  # extra space after export prevents interference from conda init
     fi
 fi
 unset __mamba_setup
 # <<< mamba initialize <<<
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/marco/source/google-cloud-sdk/path.zsh.inc' ]; then . '/home/marco/source/google-cloud-sdk/path.zsh.inc'; fi
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/home/marco/source/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/marco/source/google-cloud-sdk/completion.zsh.inc'; fi
 
-# pnpm
-export PNPM_HOME="/home/marco/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
+source /Users/msoares/.config/broot/launcher/bash/br

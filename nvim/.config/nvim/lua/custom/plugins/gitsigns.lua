@@ -1,19 +1,40 @@
-return {
-  -- Adds git releated signs to the gutter, as well as utilities for managing changes
+local M = {
   'lewis6991/gitsigns.nvim',
-  opts = {
-    -- See `:help gitsigns.txt`
-    signs = {
-      add = { text = '+' },
-      change = { text = '~' },
-      delete = { text = '_' },
-      topdelete = { text = '‾' },
-      changedelete = { text = '~' },
-    },
-    on_attach = function(bufnr)
-      vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
-      vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
-      vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
-    end,
+  event = 'BufReadPre',
+}
+
+M.opts = {
+  signs = {
+    add = { hl = "GitSignsAdd", text = "│", numhl = "GitSignsAddNr" },
+    change = { hl = "GitSignsChange", text = "│", numhl = "GitSignsChangeNr" },
+    delete = { hl = "GitSignsDelete", text = "_", numhl = "GitSignsDeleteNr" },
+    topdelete = { hl = "GitSignsDelete", text = "‾", numhl = "GitSignsDeleteNr" },
+    changedelete = { hl = "GitSignsDelete", text = "~", numhl = "GitSignsChangeNr" },
+  },
+  numhl = false,
+  linehl = false,
+  signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
+  watch_gitdir = {
+    interval = 1000,
+    follow_files = true,
+  },
+  attach_to_untracked = true,
+  current_line_blame_opts = {
+    virt_text = true,
+    virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+    delay = 1000,
+  },
+  sign_priority = 6,
+  update_debounce = 100,
+  status_formatter = nil, -- Use default
+  preview_config = {
+    -- Options passed to nvim_open_win
+    border = 'single',
+    style = 'minimal',
+    relative = 'cursor',
+    row = 0,
+    col = 1,
   },
 }
+
+return M

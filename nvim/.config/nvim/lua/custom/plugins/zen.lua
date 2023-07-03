@@ -1,8 +1,8 @@
 return {
   {
-    "folke/zen-mode.nvim",
+    'folke/zen-mode.nvim',
     config = function()
-      require("zen-mode").setup {
+      require('zen-mode').setup {
         window = {
           backdrop = 1,
           height = 0.9,
@@ -10,14 +10,14 @@ return {
           options = {
             number = false,
             relativenumber = false,
-            signcolumn = "no",
+            signcolumn = 'no',
             list = false,
             cursorline = false,
           },
         },
       }
 
-      require("twilight").setup {
+      require('twilight').setup {
         context = -1,
         treesitter = true,
       }
@@ -25,9 +25,9 @@ return {
   },
 
   {
-    "folke/twilight.nvim",
+    'folke/twilight.nvim',
     config = function()
-      require("twilight").setup {
+      require('twilight').setup {
         context = -1,
         treesitter = true,
       }

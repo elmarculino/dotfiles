@@ -1,4 +1,4 @@
-local java_cmds = vim.api.nvim_create_augroup('java_cmds', {clear = true})
+local java_cmds = vim.api.nvim_create_augroup('java_cmds', { clear = true })
 local cache_vars = {}
 
 local root_files = {
@@ -25,20 +25,18 @@ local function get_jdtls_paths()
 
   local path = {}
 
-  path.data_dir = vim.fn.stdpath('cache') .. '/nvim-jdtls'
+  path.data_dir = vim.fn.stdpath 'cache' .. '/nvim-jdtls'
 
-  local jdtls_install = require('mason-registry')
-    .get_package('jdtls')
-    :get_install_path()
+  local jdtls_install = require('mason-registry').get_package('jdtls'):get_install_path()
 
   path.java_agent = jdtls_install .. '/lombok.jar'
   path.launcher_jar = vim.fn.glob(jdtls_install .. '/plugins/org.eclipse.equinox.launcher_*.jar')
 
-  if vim.fn.has('mac') == 1 then
+  if vim.fn.has 'mac' == 1 then
     path.platform_config = jdtls_install .. '/config_mac'
-  elseif vim.fn.has('unix') == 1 then
+  elseif vim.fn.has 'unix' == 1 then
     path.platform_config = jdtls_install .. '/config_linux'
-  elseif vim.fn.has('win32') == 1 then
+  elseif vim.fn.has 'win32' == 1 then
     path.platform_config = jdtls_install .. '/config_win'
   end
 
@@ -47,14 +45,9 @@ local function get_jdtls_paths()
   ---
   -- Include java-test bundle if present
   ---
-  local java_test_path = require('mason-registry')
-    .get_package('java-test')
-    :get_install_path()
+  local java_test_path = require('mason-registry').get_package('java-test'):get_install_path()
 
-  local java_test_bundle = vim.split(
-    vim.fn.glob(java_test_path .. '/extension/server/*.jar'),
-    '\n'
-  )
+  local java_test_bundle = vim.split(vim.fn.glob(java_test_path .. '/extension/server/*.jar'), '\n')
 
   if java_test_bundle[1] ~= '' then
     vim.list_extend(path.bundles, java_test_bundle)
@@ -63,40 +56,13 @@ local function get_jdtls_paths()
   ---
   -- Include java-debug-adapter bundle if present
   ---
-  local java_debug_path = require('mason-registry')
-    .get_package('java-debug-adapter')
-    :get_install_path()
+  local java_debug_path = require('mason-registry').get_package('java-debug-adapter'):get_install_path()
 
-  local java_debug_bundle = vim.split(
-    vim.fn.glob(java_debug_path .. '/extension/server/com.microsoft.java.debug.plugin-*.jar'),
-    '\n'
-  )
+  local java_debug_bundle = vim.split(vim.fn.glob(java_debug_path .. '/extension/server/com.microsoft.java.debug.plugin-*.jar'), '\n')
 
   if java_debug_bundle[1] ~= '' then
     vim.list_extend(path.bundles, java_debug_bundle)
   end
-
-  ---
-  -- Useful if you're starting jdtls with a Java version that's 
-  -- different from the one the project uses.
-  ---
-  path.runtimes = {
-    -- Note: the field `name` must be a valid `ExecutionEnvironment`,
-    -- you can find the list here: 
-    -- https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-    --
-    -- This example assume you are using sdkman: https://sdkman.io
-    -- {
-    --   name = 'JavaSE-17',
-    --   path = vim.fn.expand('~/.sdkman/candidates/java/17.0.6-tem'),
-    -- },
-    -- {
-    --   name = 'JavaSE-18',
-    --   path = vim.fn.expand('~/.sdkman/candidates/java/18.0.2-amzn'),
-    -- },
-  }
-
-  cache_vars.paths = path
 
   return path
 end
@@ -115,10 +81,10 @@ local function enable_codelens(bufnr)
 end
 
 local function enable_debugger(bufnr)
-  require('jdtls').setup_dap({hotcodereplace = 'auto'})
+  require('jdtls').setup_dap { hotcodereplace = 'auto' }
   require('jdtls.dap').setup_dap_main_class_configs()
 
-  local opts = {buffer = bufnr}
+  local opts = { buffer = bufnr }
   vim.keymap.set('n', '<leader>df', "<cmd>lua require('jdtls').test_class()<cr>", opts)
   vim.keymap.set('n', '<leader>dn', "<cmd>lua require('jdtls').test_nearest_method()<cr>", opts)
 end
@@ -126,11 +92,11 @@ end
 -- Helper function for creating keymaps
 function nnoremap(rhs, lhs, bufopts, desc)
   bufopts.desc = desc
-  vim.keymap.set("n", rhs, lhs, bufopts)
+  vim.keymap.set('n', rhs, lhs, bufopts)
 end
 
 local function jdtls_on_attach(client, bufnr)
-  local jdtls = require('jdtls')
+  local jdtls = require 'jdtls'
 
   if features.debugger then
     enable_debugger(bufnr)
@@ -140,49 +106,54 @@ local function jdtls_on_attach(client, bufnr)
     enable_codelens(bufnr)
   end
 
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }
-  nnoremap('gD', vim.lsp.buf.declaration, bufopts, "Go to declaration")
-  nnoremap('gd', vim.lsp.buf.definition, bufopts, "Go to definition")
-  nnoremap('gi', vim.lsp.buf.implementation, bufopts, "Go to implementation")
-  nnoremap('K', vim.lsp.buf.hover, bufopts, "Hover text")
-  nnoremap('<C-k>', vim.lsp.buf.signature_help, bufopts, "Show signature")
-  nnoremap('<space>wa', vim.lsp.buf.add_workspace_folder, bufopts, "Add workspace folder")
-  nnoremap('<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts, "Remove workspace folder")
+  local bufopts = { noremap = true, silent = true, buffer = bufnr }
+  nnoremap('gD', vim.lsp.buf.declaration, bufopts, 'Go to declaration')
+  nnoremap('gd', vim.lsp.buf.definition, bufopts, 'Go to definition')
+  nnoremap('gi', vim.lsp.buf.implementation, bufopts, 'Go to implementation')
+  nnoremap('K', vim.lsp.buf.hover, bufopts, 'Hover text')
+  nnoremap('<C-k>', vim.lsp.buf.signature_help, bufopts, 'Show signature')
+  nnoremap('<space>wa', vim.lsp.buf.add_workspace_folder, bufopts, 'Add workspace folder')
+  nnoremap('<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts, 'Remove workspace folder')
   nnoremap('<space>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, bufopts, "List workspace folders")
-  nnoremap('<space>D', vim.lsp.buf.type_definition, bufopts, "Go to type definition")
-  nnoremap('<space>rn', vim.lsp.buf.rename, bufopts, "Rename")
-  nnoremap('<space>ca', vim.lsp.buf.code_action, bufopts, "Code actions")
-  vim.keymap.set('v', "<space>ca", "<ESC><CMD>lua vim.lsp.buf.range_code_action()<CR>",
-    { noremap=true, silent=true, buffer=bufnr, desc = "Code actions" })
-  nnoremap('<space>f', function() vim.lsp.buf.format { async = true } end, bufopts, "Format file")
+  end, bufopts, 'List workspace folders')
+  nnoremap('<space>D', vim.lsp.buf.type_definition, bufopts, 'Go to type definition')
+  nnoremap('<space>rn', vim.lsp.buf.rename, bufopts, 'Rename')
+  nnoremap('<space>ca', vim.lsp.buf.code_action, bufopts, 'Code actions')
+  vim.keymap.set(
+    'v',
+    '<space>ca',
+    '<ESC><CMD>lua vim.lsp.buf.range_code_action()<CR>',
+    { noremap = true, silent = true, buffer = bufnr, desc = 'Code actions' }
+  )
+  nnoremap('<space>f', function()
+    vim.lsp.buf.format { async = true }
+  end, bufopts, 'Format file')
 
   -- The following mappings are based on the suggested usage of nvim-jdtls
   -- https://github.com/mfussenegger/nvim-jdtls#usage
-  nnoremap("<C-o>", jdtls.organize_imports, bufopts, "Organize imports")
-  nnoremap("<space>ev", jdtls.extract_variable, bufopts, "Extract variable")
-  nnoremap("<space>ec", jdtls.extract_constant, bufopts, "Extract constant")
-  vim.keymap.set('v', "<space>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
-    { noremap=true, silent=true, buffer=bufnr, desc = "Extract method" })
-
+  nnoremap('<C-o>', jdtls.organize_imports, bufopts, 'Organize imports')
+  nnoremap('<space>ev', jdtls.extract_variable, bufopts, 'Extract variable')
+  nnoremap('<space>ec', jdtls.extract_constant, bufopts, 'Extract constant')
+  vim.keymap.set(
+    'v',
+    '<space>em',
+    [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
+    { noremap = true, silent = true, buffer = bufnr, desc = 'Extract method' }
+  )
 end
 
 local function jdtls_setup(event)
-  local jdtls = require('jdtls')
+  local jdtls = require 'jdtls'
 
   local path = get_jdtls_paths()
-  local data_dir = path.data_dir .. '/' ..  vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+  local data_dir = path.data_dir .. '/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 
   if cache_vars.capabilities == nil then
     jdtls.extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
     local ok_cmp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
-    cache_vars.capabilities = vim.tbl_deep_extend(
-      'force',
-      vim.lsp.protocol.make_client_capabilities(),
-      ok_cmp and cmp_lsp.default_capabilities() or {}
-    )
+    cache_vars.capabilities = vim.tbl_deep_extend('force', vim.lsp.protocol.make_client_capabilities(), ok_cmp and cmp_lsp.default_capabilities() or {})
   end
 
   -- The command that starts the language server
@@ -203,7 +174,7 @@ local function jdtls_setup(event)
     'java.base/java.util=ALL-UNNAMED',
     '--add-opens',
     'java.base/java.lang=ALL-UNNAMED',
-    
+
     -- 💀
     '-jar',
     path.launcher_jar,
@@ -221,7 +192,7 @@ local function jdtls_setup(event)
 
     java = {
       home = '/opt/homebrew/opt/openjdk/bin/java',
-      updateBuildConfiguration = "interactive",
+      updateBuildConfiguration = 'interactive',
       runtimes = {
         {
           name = 'JavaSE-20',
@@ -263,7 +234,7 @@ local function jdtls_setup(event)
         -- settings = {
         --   profile = 'asdf'
         -- },
-      }
+      },
     },
     signatureHelp = {
       enabled = true,
@@ -287,7 +258,7 @@ local function jdtls_setup(event)
       organizeImports = {
         starThreshold = 9999,
         staticStarThreshold = 9999,
-      }
+      },
     },
     codeGeneration = {
       toString = {
@@ -299,7 +270,7 @@ local function jdtls_setup(event)
 
   -- This starts a new client & server,
   -- or attaches to an existing client & server depending on the `root_dir`.
-  jdtls.start_or_attach({
+  jdtls.start_or_attach {
     cmd = cmd,
     settings = lsp_settings,
     on_attach = jdtls_on_attach,
@@ -311,12 +282,12 @@ local function jdtls_setup(event)
     init_options = {
       bundles = path.bundles,
     },
-  })
+  }
 end
 
 vim.api.nvim_create_autocmd('FileType', {
   group = java_cmds,
-  pattern = {'java'},
+  pattern = { 'java' },
   desc = 'Setup jdtls',
   callback = jdtls_setup,
 })

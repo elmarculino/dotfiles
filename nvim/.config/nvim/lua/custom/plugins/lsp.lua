@@ -13,11 +13,14 @@ local M = {
     -- Additional lua configuration, makes nvim stuff amazing!
     'folke/neodev.nvim',
   },
+
+  -- Java plugin
+  'mfussenegger/nvim-jdtls',
+  'mfussenegger/nvim-dap',
 }
 
 function M.config()
   local on_attach = function(_, bufnr)
-
     local nmap = function(keys, func, desc)
       if desc then
         desc = 'LSP: ' .. desc

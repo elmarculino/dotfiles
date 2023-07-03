@@ -1,15 +1,39 @@
-local ok, _ = pcall(require, "telescope")
+local ok, telescope = pcall(require, 'telescope')
 if not ok then
   return
 end
 
-local opts = { noremap=true, silent=true }
+-- [[ Configure Telescope ]]
+-- See `:help telescope` and `:help telescope.setup()`
+telescope.setup {
+  defaults = {
+    mappings = {
+      i = {
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
+      },
+    },
+  },
+}
 
-vim.api.nvim_set_keymap('n', '<leader>.', '<cmd>lua require("elmarculino.telescope").project_files()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<C-p>', '<cmd>lua require("elmarculino.telescope").project_files()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>,', '<cmd>lua require("elmarculino.telescope").buffers()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>lua require("telescope.builtin").live_grep()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>fo', '<cmd>lua require("telescope.builtin").oldfiles()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>lua require("telescope.builtin").help_tags()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>lua require("elmarculino.telescope").current_buffer()<cr>', opts)
-vim.api.nvim_set_keymap('n', '<leader>fs', '<cmd>lua require("elmarculino.telescope").current_buffer()<cr>', opts)
+-- Enable telescope fzf native, if installed
+pcall(telescope.load_extension, 'fzf')
+
+-- See `:help telescope.builtin`
+vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>,', require('telescope.builtin').buffers, { desc = '[,] Find existing buffers' })
+vim.keymap.set('n', '<leader>/', function()
+  -- You can pass additional configuration to telescope to change theme, layout, etc.
+  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+    winblend = 10,
+    previewer = false,
+  })
+end, { desc = '[/] Fuzzily search in current buffer' })
+
+vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
+vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>.', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })

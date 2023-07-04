@@ -1,6 +1,8 @@
 return {
   {
     'nvim-telescope/telescope.nvim',
+    event = 'Bufenter',
+    cmd = { 'Telescope' },
     version = '*',
     -- config = function()
     --   require 'elmaculino.plugins.telescope'

@@ -19,50 +19,41 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
 
+  -- Lsp Java plugin
+  'mfussenegger/nvim-jdtls',
+  'mfussenegger/nvim-dap',
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
+    event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  },
-
-  {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
-
-  {
-    -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
   },
 
   -- Files keyboard shortuts
   { 'ThePrimeagen/harpoon', dependencies = { 'nvim-lua/plenary.nvim' } },
 
   -- Files keyboard shortuts
-  { 'ThePrimeagen/refactoring.nvim', requires = { { 'nvim-lua/plenary.nvim' }, { 'nvim-treesitter/nvim-treesitter' } } },
+  {
+    'ThePrimeagen/refactoring.nvim',
+    event = 'BufReadPost',
+    requires = { { 'nvim-lua/plenary.nvim' }, { 'nvim-treesitter/nvim-treesitter' } },
+  },
 
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    event = 'BufReadPost',
     dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
+      { 'nvim-treesitter/nvim-treesitter-textobjects', event = 'VeryLazy' },
     },
     build = ':TSUpdate',
   },
 
+  -- Custom plugins configs
   { import = 'custom.plugins' },
 }, {})
 
@@ -119,7 +110,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
-
 -- [[ Basic Keymaps ]]
 
 -- Shorten function name
@@ -135,40 +125,40 @@ local opts = { silent = true }
 -- keymap("n", "<C-l>", "<C-w>l", opts)
 
 -- Resize with arrows
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+keymap('n', '<C-Up>', ':resize -2<CR>', opts)
+keymap('n', '<C-Down>', ':resize +2<CR>', opts)
+keymap('n', '<C-Left>', ':vertical resize -2<CR>', opts)
+keymap('n', '<C-Right>', ':vertical resize +2<CR>', opts)
 
 -- Navigate buffers
-keymap("n", "<S-l>", ":bnext<CR>", opts)
-keymap("n", "<S-h>", ":bprevious<CR>", opts)
+keymap('n', '<S-l>', ':bnext<CR>', opts)
+keymap('n', '<S-h>', ':bprevious<CR>', opts)
 
 -- Clear highlights
-keymap("n", "<leader>h", "<cmd>nohlsearch<CR>", opts)
+keymap('n', '<leader>h', '<cmd>nohlsearch<CR>', opts)
 
 -- Close buffers
-keymap("n", "<S-q>", "<cmd>Bdelete!<CR>", opts)
+keymap('n', '<S-q>', '<cmd>Bdelete!<CR>', opts)
 
 -- Better paste
-keymap("v", "p", "P", opts)
+keymap('v', 'p', 'P', opts)
 
 -- Insert --
 -- Press jk fast to enter
-keymap("i", "jk", "<ESC>", opts)
+keymap('i', 'jk', '<ESC>', opts)
 
 -- Visual --
 -- Stay in indent mode
-keymap("v", "<", "<gv", opts)
-keymap("v", ">", ">gv", opts)
+keymap('v', '<', '<gv', opts)
+keymap('v', '>', '>gv', opts)
 
 -- Plugins --
 -- Comment
-keymap("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
-keymap("x", "<leader>/", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", opts)
+keymap('n', '<leader>/', "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
+keymap('x', '<leader>/', "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", opts)
 
 -- Lsp
-keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", opts)
+keymap('n', '<leader>lf', '<cmd>lua vim.lsp.buf.format{ async = true }<cr>', opts)
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 keymap({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })

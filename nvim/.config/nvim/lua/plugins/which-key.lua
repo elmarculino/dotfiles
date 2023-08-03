@@ -10,7 +10,6 @@ return {
     defaults = {
       mode = { 'n', 'v' },
       ['g'] = { name = '+goto' },
-      ['gz'] = { name = '+surround' },
       [']'] = { name = '+next' },
       ['['] = { name = '+prev' },
       ['<leader>b'] = { name = '+Buffer' },
@@ -21,6 +20,7 @@ return {
       ['<leader>w'] = { name = '+Workspace' },
       ['<leader>s'] = { name = '+Search' },
       ['<leader>gh'] = { name = '+Hunks' },
+      ['<leader>gs'] = { name = '+Surround' },
       ['<leader>x'] = { name = '+diagnostics/quickfix' },
     },
   },

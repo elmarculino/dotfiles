@@ -8,26 +8,17 @@ return {
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
-  -- Neovim Magit
-  { 'NeogitOrg/neogit', dependencies = 'nvim-lua/plenary.nvim' },
+  -- library used by other plugins
+  { 'nvim-lua/plenary.nvim', lazy = true },
 
-  -- Files keyboard shortuts
-  { 'ThePrimeagen/harpoon', dependencies = { 'nvim-lua/plenary.nvim' } },
-
-  -- Files keyboard shortuts
+  -- search/replace in multiple files
   {
-    'ThePrimeagen/refactoring.nvim',
-    event = 'BufReadPost',
-    requires = { { 'nvim-lua/plenary.nvim' }, { 'nvim-treesitter/nvim-treesitter' } },
-  },
-
-  {
-    -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    event = 'BufReadPost',
-    dependencies = {
-      { 'nvim-treesitter/nvim-treesitter-textobjects', event = 'VeryLazy' },
+    'nvim-pack/nvim-spectre',
+    cmd = 'Spectre',
+    opts = { open_cmd = 'noswapfile vnew' },
+    -- stylua: ignore
+    keys = {
+      { "<leader>sr", function() require("spectre").open() end, desc = "Replace in files (Spectre)" },
     },
-    build = ':TSUpdate',
   },
 }

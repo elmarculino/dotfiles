@@ -1,103 +1,100 @@
 return {
 
-  -- snippets
-  {
-    'L3MON4D3/LuaSnip',
-    build = (not jit.os:find 'Windows') and "echo 'NOTE: jsregexp is optional, so not a big deal if it fails to build'; make install_jsregexp" or nil,
-    dependencies = {
-      'rafamadriz/friendly-snippets',
-      config = function()
-        require('luasnip.loaders.from_vscode').lazy_load()
-      end,
-    },
-    opts = {
-      history = true,
-      delete_check_events = 'TextChanged',
-    },
-    -- stylua: ignore
-    keys = {
-      {
-        "<tab>",
-        function()
-          return require("luasnip").jumpable(1) and "<Plug>luasnip-jump-next" or "<tab>"
-        end,
-        expr = true, silent = true, mode = "i",
-      },
-      { "<tab>", function() require("luasnip").jump(1) end, mode = "s" },
-      { "<s-tab>", function() require("luasnip").jump(-1) end, mode = { "i", "s" } },
-    },
-  },
-
-  -- auto completion
-  {
+  { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    version = false, -- last release is way too old
     event = 'InsertEnter',
     dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
+      'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
     },
-    opts = function()
-      vim.api.nvim_set_hl(0, 'CmpGhostText', { link = 'Comment', default = true })
+    config = function()
+      -- See `:help cmp`
       local cmp = require 'cmp'
-      local defaults = require 'cmp.config.default'()
-      return {
-        completion = {
-          completeopt = 'menu,menuone,noinsert',
-        },
+      local luasnip = require 'luasnip'
+      luasnip.config.setup {}
+
+      cmp.setup {
         snippet = {
           expand = function(args)
-            require('luasnip').lsp_expand(args.body)
+            luasnip.lsp_expand(args.body)
           end,
         },
+        completion = { completeopt = 'menu,menuone,noinsert' },
         mapping = cmp.mapping.preset.insert {
-          ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
-          ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
-          ['<CR>'] = cmp.mapping.confirm { select = true }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-          ['<S-CR>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-          }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          ['<C-Space>'] = cmp.mapping.complete {},
+          ['<C-l>'] = cmp.mapping(function()
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            end
+          end, { 'i', 's' }),
+          ['<C-h>'] = cmp.mapping(function()
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { 'i', 's' }),
         },
-        sources = cmp.config.sources {
+        sources = {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
-          { name = 'buffer' },
           { name = 'path' },
         },
-        -- formatting = {
-        --   format = function(_, item)
-        --     local icons = require('lazyvim.config').icons.kinds
-        --     if icons[item.kind] then
-        --       item.kind = icons[item.kind] .. item.kind
-        --     end
-        --     return item
-        --   end,
-        -- },
-        experimental = {
-          ghost_text = {
-            hl_group = 'CmpGhostText',
-          },
-        },
-        sorting = defaults.sorting,
       }
     end,
+  },
+
+  -- auto pairs
+  -- Better Around/Inside textobjects
+  --
+  -- Examples:
+  --  - va)  - [V]isually select [A]round [)]paren
+  --  - yinq - [Y]ank [I]nside [N]ext [']quote
+  --  - ci'  - [C]hange [I]nside [']quote
+  {
+    'echasnovski/mini.ai',
+    event = 'VeryLazy',
+    enabled = false,
+    opts = { n_lines = 500 },
+  },
+
+  {
+    'echasnovski/mini.comment',
+    event = 'VeryLazy',
+    opts = {
+      options = {
+        custom_commentstring = function()
+          return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
+        end,
+      },
+    },
   },
 
   -- auto pairs
   {
     'echasnovski/mini.pairs',
     event = 'VeryLazy',
+    enabled = false,
+    opts = {},
+  },
+
+  -- align
+  {
+    'echasnovski/mini.align',
+    event = 'VeryLazy',
+    enabled = true,
     opts = {},
   },
 
   -- surround
+  -- Add/delete/replace surroundings (brackets, quotes, etc.)
+  --
+  -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+  -- - sd'   - [S]urround [D]elete [']quotes
+  -- - sr)'  - [S]urround [R]eplace [)] [']
   {
     'echasnovski/mini.surround',
     keys = function(_, keys)
@@ -119,6 +116,7 @@ return {
       return vim.list_extend(mappings, keys)
     end,
     opts = {
+      highlight_duration = 1000,
       mappings = {
         add = 'gsa', -- Add surrounding in Normal and Visual modes
         delete = 'gsd', -- Delete surrounding
@@ -133,23 +131,42 @@ return {
 
   -- comments
   { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true },
-  {
-    'echasnovski/mini.comment',
-    event = 'VeryLazy',
-    opts = {
-      options = {
-        custom_commentstring = function()
-          return require('ts_context_commentstring.internal').calculate_commentstring() or vim.bo.commentstring
-        end,
-      },
-    },
-  },
 
   -- refactoring
   {
     'ThePrimeagen/refactoring.nvim',
     event = 'BufReadPost',
-    requires = { { 'nvim-lua/plenary.nvim' }, { 'nvim-treesitter/nvim-treesitter' } },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+  },
 
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    event = 'BufReadPre',
+    keys = {
+      { '<leader>cc', '<cmd>TSContextToggle<cr>', desc = 'Toggle treesitter context' },
+      {
+        ';gc',
+        function()
+          require('treesitter-context').go_to_context()
+        end,
+        desc = '[G]oto [C]ontext',
+      },
+    },
+    opts = {
+      enable = true,
+      max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+      min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+      line_numbers = true,
+      multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+      trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+      mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
+      -- Separator between context and content. Should be a single character string, like '-'.
+      -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+      separator = nil,
+      zindex = 20, -- The Z-index of the context window
+    },
   },
 }

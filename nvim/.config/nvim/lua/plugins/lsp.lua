@@ -3,16 +3,32 @@ local M = {
   'neovim/nvim-lspconfig',
   dependencies = {
     -- Automatically install LSPs to stdpath for neovim
-    { 'williamboman/mason.nvim', config = true },
+    'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
 
     -- Useful status updates for LSP
-    { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+    { 'j-hui/fidget.nvim', opts = {} },
 
     -- Additional lua configuration, makes nvim stuff amazing!
     'folke/neodev.nvim',
   },
 }
+
+local function organize_imports()
+  local params = {
+    command = 'pyright.organizeimports',
+    arguments = { vim.uri_from_bufnr(0) },
+  }
+
+  local clients = vim.lsp.get_active_clients {
+    bufnr = vim.api.nvim_get_current_buf(),
+    name = 'pyright',
+  }
+  for _, client in ipairs(clients) do
+    client.request('workspace/executeCommand', params, nil, 0)
+  end
+end
 
 function M.config()
   local on_attach = function(_, bufnr)
@@ -26,6 +42,7 @@ function M.config()
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+    nmap('<leader>rr', vim.lsp.buf.reference, '[R]efe[r]ence')
 
     nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
     nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -33,6 +50,13 @@ function M.config()
     nmap('<leader>lD', vim.lsp.buf.type_definition, 'Type [D]efinition')
     nmap('<leader>lds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+
+    nmap('<leader>vws', function()
+      vim.lsp.buf.workspace_symbol()
+    end, '[W]orkspace [S]ymbols')
+    nmap('<leader>vd', function()
+      vim.diagnostic.open_float()
+    end, 'Diagnostic open float')
 
     -- See `:help K` for why this keymap
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -42,8 +66,9 @@ function M.config()
     nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
     nmap('<leader>lwa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
     nmap('<leader>lwr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap('<leader>lwl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, '[W]orkspace [L]ist Folders')
-
+    nmap('<leader>lwl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, '[W]orkspace [L]ist Folders')
     nmap('<leader>lf', vim.lsp.buf.format, '[F]format')
 
     -- Create a command `:Format` local to the LSP buffer
@@ -54,7 +79,25 @@ function M.config()
 
   -- Lsp Servers
   local servers = {
-    pyright = {},
+
+    pyright = {
+      settings = {
+        python = {
+          analysis = {
+            autoSearchPaths = true,
+            diagnosticMode = 'openFilesOnly',
+            useLibraryCodeForTypes = true,
+            autoImportCompletions = true, -- This enables auto-import
+          },
+        },
+      },
+      commands = {
+        PyrightOrganizeImports = {
+          organize_imports,
+          description = 'Organize Imports',
+        },
+      },
+    },
     rust_analyzer = {},
     tsserver = {},
   }

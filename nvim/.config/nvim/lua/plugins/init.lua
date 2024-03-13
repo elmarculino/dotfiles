@@ -1,9 +1,9 @@
 return {
   'hashivim/vim-terraform',
+  'mbbill/undotree',
 
   -- Lsp Java plugin
   'mfussenegger/nvim-jdtls',
-  'mfussenegger/nvim-dap',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',

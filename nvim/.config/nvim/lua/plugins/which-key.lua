@@ -10,6 +10,7 @@ return {
     defaults = {
       mode = { 'n', 'v' },
       ['g'] = { name = '+goto' },
+      [';g'] = { name = '+goto' },
       [']'] = { name = '+next' },
       ['['] = { name = '+prev' },
       ['<leader>b'] = { name = '+Buffer' },

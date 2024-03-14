@@ -15,21 +15,6 @@ local M = {
   },
 }
 
-local function organize_imports()
-  local params = {
-    command = 'pyright.organizeimports',
-    arguments = { vim.uri_from_bufnr(0) },
-  }
-
-  local clients = vim.lsp.get_active_clients {
-    bufnr = vim.api.nvim_get_current_buf(),
-    name = 'pyright',
-  }
-  for _, client in ipairs(clients) do
-    client.request('workspace/executeCommand', params, nil, 0)
-  end
-end
-
 function M.config()
   local on_attach = function(_, bufnr)
     local nmap = function(keys, func, desc)
@@ -51,12 +36,8 @@ function M.config()
     nmap('<leader>lds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
-    nmap('<leader>vws', function()
-      vim.lsp.buf.workspace_symbol()
-    end, '[W]orkspace [S]ymbols')
-    nmap('<leader>vd', function()
-      vim.diagnostic.open_float()
-    end, 'Diagnostic open float')
+    nmap('<leader>vws', function() vim.lsp.buf.workspace_symbol() end, '[W]orkspace [S]ymbols')
+    nmap('<leader>vd', function() vim.diagnostic.open_float() end, 'Diagnostic open float')
 
     -- See `:help K` for why this keymap
     nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
@@ -89,12 +70,6 @@ function M.config()
             useLibraryCodeForTypes = true,
             autoImportCompletions = true, -- This enables auto-import
           },
-        },
-      },
-      commands = {
-        PyrightOrganizeImports = {
-          organize_imports,
-          description = 'Organize Imports',
         },
       },
     },

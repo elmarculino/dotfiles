@@ -23,6 +23,8 @@ return {
         bin_path = vim.api.nvim_call_function('stdpath', { 'data' }) .. '/mason/bin/llm-ls',
       },
       enable_suggestions_on_startup = false, -- do not enable by default
+      accept_keymap = "<C-y>",
+      dismiss_keymap = "<Esc>",
     }
   end,
 }

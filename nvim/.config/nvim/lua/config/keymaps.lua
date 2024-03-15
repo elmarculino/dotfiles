@@ -1,10 +1,10 @@
 -- [[ Basic Keymaps ]]
 
 -- Resize with arrows
-vim.keymap.set('n', '<C-Up>', ':resize -2<CR>', { silent = true })
-vim.keymap.set('n', '<C-Down>', ':resize +2<CR>', { silent = true })
-vim.keymap.set('n', '<C-Left>', ':vertical resize -2<CR>', { silent = true })
-vim.keymap.set('n', '<C-Right>', ':vertical resize +2<CR>', { silent = true })
+vim.keymap.set('n', '<S-Up>', ':resize -2<CR>', { silent = true })
+vim.keymap.set('n', '<S-Down>', ':resize +2<CR>', { silent = true })
+vim.keymap.set('n', '<S-Left>', ':vertical resize -2<CR>', { silent = true })
+vim.keymap.set('n', '<S-Right>', ':vertical resize +2<CR>', { silent = true })
 
 -- Clear highlights
 vim.keymap.set('n', '<leader>h', '<cmd>nohlsearch<CR>', { silent = true })

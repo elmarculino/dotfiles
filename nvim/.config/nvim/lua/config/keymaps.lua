@@ -23,7 +23,7 @@ vim.keymap.set('v', '>', '>gv', { silent = true })
 
 -- Plugins --
 -- Lsp
-vim.keymap.set('n', '<leader>lf', '<cmd>lua vim.lsp.buf.format{ async = true }<cr>', { desc = '[F]format', silent = true })
+vim.keymap.set('n', '<leader>cf', '<cmd>lua vim.lsp.buf.format{ async = true }<cr>', { desc = '[F]format', silent = true })
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
@@ -97,16 +97,13 @@ vim.keymap.set('n', '<leader>z', '<cmd>ZenMod<CR>', { desc = 'Open [Z]enMod' })
 -- vim.cmd([[%s/\(\d\+\)/\1,/g | v/\S/d | %join]])
 
 local function format_list()
-	vim.cmd([[
+  vim.cmd [[
     %s/\(\d\+\)/\1,/g | v/\S/d | %join
     execute 'normal $x' | execute 'normal ggVGYY'
-	]])
+	]]
 end
 
 vim.keymap.set('n', '<leader>fl', format_list, { desc = 'Format List' })
-
-
-vim.keymap.set('n', '<leader><F5>', vim.cmd.UndotreeToggle)
 
 -- Keybinds to make split navigation easier.
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })

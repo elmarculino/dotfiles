@@ -1,110 +1,173 @@
-local M = {
-  -- LSP Configuration & Plugins
-  'neovim/nvim-lspconfig',
-  dependencies = {
-    -- Automatically install LSPs to stdpath for neovim
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
+return {
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      'folke/neodev.nvim',
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'WhoIsSethDaniel/mason-tool-installer.nvim',
 
-    -- Useful status updates for LSP
-    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-    { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
-    -- Additional lua configuration, makes nvim stuff amazing!
-    'folke/neodev.nvim',
-  },
-}
+      -- Autoformatting
+      'stevearc/conform.nvim',
 
-function M.config()
-  local on_attach = function(_, bufnr)
-    local nmap = function(keys, func, desc)
-      if desc then
-        desc = 'LSP: ' .. desc
+      -- Schema information
+      'b0o/SchemaStore.nvim',
+    },
+    config = function()
+      require('neodev').setup {
+        -- library = {
+        --   plugins = { "nvim-dap-ui" },
+        --   types = true,
+        -- },
+      }
+
+      local capabilities = nil
+      if pcall(require, 'cmp_nvim_lsp') then
+        capabilities = require('cmp_nvim_lsp').default_capabilities()
       end
 
-      vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
-    end
+      local lspconfig = require 'lspconfig'
 
-    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    nmap('<leader>rr', vim.lsp.buf.reference, '[R]efe[r]ence')
-
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-    nmap('<leader>lD', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>lds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-    nmap('<leader>lws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-    nmap('<leader>vws', function() vim.lsp.buf.workspace_symbol() end, '[W]orkspace [S]ymbols')
-    nmap('<leader>vd', function() vim.diagnostic.open_float() end, 'Diagnostic open float')
-
-    -- See `:help K` for why this keymap
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    -- nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-
-    -- Lesser used LSP functionality
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('<leader>lwa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>lwr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap('<leader>lwl', function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, '[W]orkspace [L]ist Folders')
-    nmap('<leader>lf', vim.lsp.buf.format, '[F]format')
-
-    -- Create a command `:Format` local to the LSP buffer
-    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-      vim.lsp.buf.format()
-    end, { desc = 'Format current buffer with LSP' })
-  end
-
-  -- Lsp Servers
-  local servers = {
-
-    pyright = {
-      settings = {
-        python = {
-          analysis = {
-            autoSearchPaths = true,
-            diagnosticMode = 'openFilesOnly',
-            useLibraryCodeForTypes = true,
-            autoImportCompletions = true, -- This enables auto-import
+      local servers = {
+        bashls = true,
+        gopls = {
+          settings = {
+            gopls = {
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+            },
           },
         },
-      },
-    },
-    rust_analyzer = {},
-    tsserver = {},
-  }
+        lua_ls = true,
+        pyright = true,
+        rust_analyzer = true,
+        templ = true,
+        cssls = true,
 
-  -- Setup neovim lua configuration
-  require('neodev').setup()
+        -- Probably want to disable formatting for this lang server
+        tsserver = true,
 
-  -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+        jsonls = {
+          settings = {
+            json = {
+              schemas = require('schemastore').json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
 
-  -- Setup mason so it can manage external tooling
-  require('mason').setup()
-
-  -- Ensure the servers above are installed
-  local mason_lspconfig = require 'mason-lspconfig'
-  local lspconfig = require 'lspconfig'
-  local get_servers = mason_lspconfig.get_installed_servers
-
-  mason_lspconfig.setup {
-    ensure_installed = vim.tbl_keys(servers),
-  }
-
-  for _, server_name in ipairs(get_servers()) do
-    if server_name ~= 'jdtls' then
-      lspconfig[server_name].setup {
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = servers[server_name],
+        yamlls = {
+          settings = {
+            yaml = {
+              schemaStore = {
+                enable = false,
+                url = '',
+              },
+              schemas = require('schemastore').yaml.schemas(),
+            },
+          },
+        },
       }
-    end
-  end
-end
 
-return M
+      local servers_to_install = vim.tbl_filter(function(key)
+        local t = servers[key]
+        if type(t) == 'table' then
+          return not t.manual_install
+        else
+          return t
+        end
+      end, vim.tbl_keys(servers))
+
+      require('mason').setup()
+      local ensure_installed = {
+        'stylua',
+        'lua_ls',
+        'delve',
+        'sqlfluff',
+        -- "tailwind-language-server",
+      }
+
+      vim.list_extend(ensure_installed, servers_to_install)
+      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      for name, config in pairs(servers) do
+        if config == true then
+          config = {}
+        end
+        config = vim.tbl_deep_extend('force', {}, {
+          capabilities = capabilities,
+        }, config)
+
+        lspconfig[name].setup(config)
+      end
+
+      local disable_semantic_tokens = {
+        lua = true,
+      }
+
+      vim.api.nvim_create_autocmd('LspAttach', {
+        callback = function(args)
+          local bufnr = args.buf
+          local client = assert(vim.lsp.get_client_by_id(args.data.client_id), 'must have valid client')
+
+          vim.opt_local.omnifunc = 'v:lua.vim.lsp.omnifunc'
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = 0 })
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = 0 })
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = 0 })
+          vim.keymap.set('n', 'gT', vim.lsp.buf.type_definition, { buffer = 0 })
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = 0 })
+
+          vim.keymap.set('n', '<space>cr', vim.lsp.buf.rename, { buffer = 0 })
+          vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, { buffer = 0 })
+
+          local filetype = vim.bo[bufnr].filetype
+          if disable_semantic_tokens[filetype] then
+            client.server_capabilities.semanticTokensProvider = nil
+          end
+        end,
+      })
+
+      -- Autoformatting Setup
+      require('conform').setup {
+        formatters_by_ft = {
+          lua = { 'stylua' },
+          python = { 'isort', 'black' },
+          javascript = { { 'prettierd', 'prettier' } },
+          sql = { 'sqlfluff' },
+          -- sql = { 'sql_formatter' },
+        },
+        formatters = {
+          -- sql_formatter = {
+          --   command = 'sql-formatter',
+          --   args = { '-l', 'tsql' }, -- Use 'tsql' for Microsoft SQL Server
+          -- },
+          sqlfluff = {
+            sqlfluff = {
+              args = { 'fix', '--dialect=tsql', '-' },
+              -- prepend_args = { '--dialect', 'postgres' },
+            },
+          },
+        },
+      }
+
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        callback = function(args)
+          require('conform').format {
+            bufnr = args.buf,
+            lsp_fallback = true,
+            quiet = true,
+          }
+        end,
+      })
+    end,
+  },
+}

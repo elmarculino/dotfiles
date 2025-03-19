@@ -22,12 +22,39 @@ return {
     keys = {
       { '<c-space>', desc = 'Increment selection' },
       { '<bs>', desc = 'Decrement selection', mode = 'x' },
+      { '<leader>cc', '<cmd>TSContextToggle<cr>', desc = 'Toggle treesitter context' },
+      {
+        ';gc',
+        function()
+          require('treesitter-context').go_to_context()
+        end,
+        desc = '[G]oto [C]ontext',
+      },
     },
     ---@type TSConfig
     opts = {
       highlight = { enable = true },
       indent = { enable = true },
-      ensure_installed = { 'bash', 'c', 'html', 'javascript', 'json', 'lua', 'luadoc', 'luap', 'markdown', 'markdown_inline', 'python', 'query', 'regex', 'tsx', 'typescript', 'vim', 'vimdoc', 'yaml' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'html',
+        'javascript',
+        'json',
+        'lua',
+        'luadoc',
+        'luap',
+        'markdown',
+        'markdown_inline',
+        'python',
+        'query',
+        'regex',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'yaml',
+      },
       incremental_selection = {
         enable = true,
         keymaps = {

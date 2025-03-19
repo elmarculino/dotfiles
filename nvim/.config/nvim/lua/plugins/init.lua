@@ -1,4 +1,5 @@
 return {
+  -- Terraform plugin
   'hashivim/vim-terraform',
 
   -- Lsp Java plugin
@@ -9,5 +10,4 @@ return {
 
   -- library used by other plugins
   { 'nvim-lua/plenary.nvim', lazy = true },
-
 }

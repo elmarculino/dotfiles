@@ -10,11 +10,11 @@ return {
 
     neogen.setup { snippet_engine = 'luasnip' }
 
-    vim.keymap.set('n', '<leader>af', function()
+    vim.keymap.set('n', '<leader>cf', function()
       neogen.generate { type = 'func' }
     end, { desc = 'Generate Function Annotation' })
 
-    vim.keymap.set('n', '<leader>at', function()
+    vim.keymap.set('n', '<leader>ct', function()
       neogen.generate { type = 'type' }
     end, { desc = 'Generate Type Annotation' })
   end,

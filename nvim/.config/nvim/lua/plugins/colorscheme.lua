@@ -11,28 +11,28 @@ return {
 
   -- kanagawa
   {
-    'rebelot/kanagawa.nvim', 
+    'rebelot/kanagawa.nvim',
     lazy = true,
   },
 
   -- everforest
   {
-    'neanias/everforest-nvim', 
+    'neanias/everforest-nvim',
     lazy = true,
   },
 
   -- tokyonight
   {
-    "folke/tokyonight.nvim",
+    'folke/tokyonight.nvim',
     lazy = true,
-    opts = { style = "moon" },
+    opts = { style = 'moon' },
   },
 
   -- catppuccin
   {
-    "catppuccin/nvim",
+    'catppuccin/nvim',
     lazy = true,
-    name = "catppuccin",
+    name = 'catppuccin',
     opts = {
       integrations = {
         alpha = true,
@@ -46,10 +46,10 @@ return {
         native_lsp = {
           enabled = true,
           underlines = {
-            errors = { "undercurl" },
-            hints = { "undercurl" },
-            warnings = { "undercurl" },
-            information = { "undercurl" },
+            errors = { 'undercurl' },
+            hints = { 'undercurl' },
+            warnings = { 'undercurl' },
+            information = { 'undercurl' },
           },
         },
         navic = { enabled = true },

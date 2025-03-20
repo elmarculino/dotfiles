@@ -2,31 +2,38 @@ return {
   'folke/which-key.nvim',
   event = 'VeryLazy',
   opts = {
-    plugins = { spelling = true },
-    init = function()
+    plugins = {
+      spelling = {
+        enabled = true, -- Enable spelling plugin
+      },
+    },
+    setup = function() -- Changed from init to setup
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
-    defaults = {
-      mode = { 'n', 'v' },
-      ['g'] = { name = '+goto' },
-      [';g'] = { name = '+goto' },
-      [']'] = { name = '+next' },
-      ['['] = { name = '+prev' },
-      ['<leader>b'] = { name = '+Buffer' },
-      ['<leader>c'] = { name = '+Code' },
-      ['<leader>d'] = { name = '+Debugger' },
-      ['<leader>g'] = { name = '+Git' },
-      ['<leader>l'] = { name = '+LSP' },
-      ['<leader>s'] = { name = '+Search' },
-      ['<leader>gh'] = { name = '+Hunks' },
-      ['<leader>gs'] = { name = '+Surround' },
-      ['<leader>x'] = { name = '+diagnostics/quickfix' },
+    spec = { -- Changed from defaults to spec
+      {
+        mode = { 'n', 'v' },
+        { ';g', group = 'goto' },
+        { '<leader>b', group = 'Buffer' },
+        { '<leader>c', group = 'Code' },
+        { '<leader>d', group = 'Debugger' },
+        { '<leader>f', group = 'Format' },
+        { '<leader>g', group = 'Git' },
+        { '<leader>gh', group = 'Hunks' },
+        { '<leader>gs', group = 'Surround' },
+        { '<leader>l', group = 'LSP' },
+        { '<leader>s', group = 'Search' },
+        { '<leader>x', group = 'diagnostics/quickfix' },
+        { '[', group = 'prev' },
+        { ']', group = 'next' },
+        { 'g', group = 'goto' },
+      },
     },
   },
   config = function(_, opts)
     local wk = require 'which-key'
-    wk.setup(opts)
-    wk.register(opts.defaults)
+    wk.setup(opts) -- Setup with options
+    wk.add(opts.spec) -- Changed from register to add
   end,
 }

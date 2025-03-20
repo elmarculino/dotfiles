@@ -1,51 +1,36 @@
 -- debug.lua
 --
--- Shows how to use the DAP plugin to debug your code.
---
--- Primarily focused on configuring the debugger for Go, but can
--- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
+-- Configures the DAP plugin for debugging in Neovim, with a focus on Python
+-- via nvim-dap-python, but extensible to other languages.
 
 return {
-  -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
   dependencies = {
-    -- Creates a beautiful debugger UI
+    -- Debugger UI
     { 'rcarriga/nvim-dap-ui', dependencies = { 'nvim-neotest/nvim-nio' } },
-
-    -- Installs the debug adapters for you
+    -- Debug adapter management
     'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
-
-    -- Add your own debuggers here
+    -- Python debugging
     'mfussenegger/nvim-dap-python',
-
-    -- additional plugins
+    -- Virtual text support
     'theHamsta/nvim-dap-virtual-text',
   },
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    -- Setup mason-nvim-dap for automatic debugger installation
     require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
       automatic_setup = true,
-
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
       handlers = {},
-
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
       ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
+        'debugpy', -- Python debugger
+        -- Add other debuggers here as needed (e.g., 'codelldb' for C/C++)
       },
     }
 
-    -- Dap UI setup
-    -- For more information, see |:help nvim-dap-ui|
+    -- Configure DAP UI
     dapui.setup {
       layouts = {
         {
@@ -53,11 +38,11 @@ return {
           size = 40,
           position = 'left',
         },
-        -- {
-        --   elements = { 'repl' },
-        --   size = 10,
-        --   position = 'bottom',
-        -- },
+        {
+          elements = { 'repl' }, -- Uncommented for interactive debugging
+          size = 10,
+          position = 'bottom',
+        },
       },
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
       controls = {
@@ -76,61 +61,72 @@ return {
       },
     }
 
-    -- Eval var under cursor
-    vim.keymap.set('n', '<space>?', function()
+    -- Keymap to evaluate variable under cursor
+    vim.keymap.set('n', '<leader>de', function()
       dapui.eval(nil, { enter = true })
-    end)
+    end, { desc = 'Debug: Evaluate under cursor' })
 
-    -- Debugging keymaps
-    vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
-    vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
-    vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
-    vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
-    vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
-    vim.keymap.set('n', '<leader>dd', dapui.toggle, { desc = 'Debug: Toggle DAP UI F7' })
+    -- Standardized debugging keymaps with <leader>d prefix
+    vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Debug: Start/Continue' })
+    vim.keymap.set('n', '<leader>do', dap.step_over, { desc = 'Debug: Step Over' })
+    vim.keymap.set('n', '<leader>di', dap.step_into, { desc = 'Debug: Step Into' })
+    vim.keymap.set('n', '<leader>dt', dap.step_out, { desc = 'Debug: Step Out' })
+    vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
+    vim.keymap.set('n', '<leader>dB', function()
+      dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
+    end, { desc = 'Debug: Set Conditional Breakpoint' })
     vim.keymap.set('n', '<leader>dr', dap.repl.toggle, { desc = 'Debug: Toggle REPL' })
-    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
-    vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Debug: Start/Continue F5' })
-    vim.keymap.set('n', '<leader>dC', dap.run_to_cursor, { desc = 'Debug: Run to Cursor' })
-    vim.keymap.set('n', '<leader>dg', dap.goto_, { desc = 'Debug: Go to line (no execute)' })
-    vim.keymap.set('n', '<leader>di', dap.step_into, { desc = 'Debug: Step Into F1' })
-    vim.keymap.set('n', '<leader>dj', dap.down, { desc = 'Debug: Down' })
-    vim.keymap.set('n', '<leader>dk', dap.up, { desc = 'Debug: Up' })
     vim.keymap.set('n', '<leader>dl', dap.run_last, { desc = 'Debug: Run Last' })
-    vim.keymap.set('n', '<leader>do', dap.step_out, { desc = 'Debug: Step Out F3' })
-    vim.keymap.set('n', '<leader>dO', dap.step_over, { desc = 'Debug: Step Over F2' })
-    vim.keymap.set('n', '<leader>dp', dap.pause, { desc = 'Debug: Pause' })
-    vim.keymap.set('n', '<leader>ds', dap.session, { desc = 'Debug: Session' })
-    vim.keymap.set('n', '<leader>dt', dap.terminate, { desc = 'Debug: Terminate' })
-    vim.keymap.set('n', '<leader>da', function()
-      dap.continue { before = get_args }
-    end, { desc = 'Debug: Run with Args' })
+    vim.keymap.set('n', '<leader>du', dapui.toggle, { desc = 'Debug: Toggle UI' })
     vim.keymap.set('n', '<leader>dh', function()
       require('dap.ui.widgets').hover()
     end, { desc = 'Debug: Hover' })
     vim.keymap.set('n', '<leader>dp', function()
       require('dap.ui.widgets').preview()
-    end, { desc = 'Debug: preview' })
-    vim.keymap.set('n', '<leader>de', function()
-      dapui.eval()
-    end, { desc = 'Debug: Eval' })
+    end, { desc = 'Debug: Preview' })
     vim.keymap.set('n', '<leader>dw', function()
       dapui.elements.watches.add()
-    end, { desc = 'Debug: Eval' })
-    vim.keymap.set('n', '<leader>du', function()
+    end, { desc = 'Debug: Add to Watches' })
+    vim.keymap.set('n', '<leader>dR', function()
       dapui.open { reset = true }
-    end, { desc = 'Debug: Reset DAP UI layout.' })
-    vim.keymap.set('n', '<leader>B', function()
-      dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-    end, { desc = 'Debug: Set Breakpoint' })
+    end, { desc = 'Debug: Reset UI Layout' })
+    vim.keymap.set('n', '<leader>dC', dap.run_to_cursor, { desc = 'Debug: Run to Cursor' })
+    vim.keymap.set('n', '<leader>dg', dap.goto_, { desc = 'Debug: Go to Line (No Execute)' })
+    vim.keymap.set('n', '<leader>dj', dap.down, { desc = 'Debug: Down Stack' })
+    vim.keymap.set('n', '<leader>dk', dap.up, { desc = 'Debug: Up Stack' })
+    vim.keymap.set('n', '<leader>ds', dap.session, { desc = 'Debug: Session Info' })
+    vim.keymap.set('n', '<leader>dx', dap.terminate, { desc = 'Debug: Terminate' })
+    vim.keymap.set('n', '<leader>dP', dap.pause, { desc = 'Debug: Pause' })
 
+    -- Optional: Define get_args for running with arguments
+    -- local function get_args()
+    --   -- Implement logic to get arguments (e.g., prompt or hardcoded list)
+    --   return vim.split(vim.fn.input('Args: '), ' ')
+    -- end
+    -- vim.keymap.set('n', '<leader>da', function()
+    --   dap.continue { before = get_args }
+    -- end, { desc = 'Debug: Run with Arguments' })
+
+    -- Auto-open/close DAP UI with debugging events
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.attach['dapui_config'] = dapui.open
     dap.listeners.before.launch['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    require('dap-python').setup '/Users/msoares/micromamba/envs/aws/bin/python'
-    require('nvim-dap-virtual-text').setup()
+    -- Setup Python debugging
+    require('dap-python').setup '$HOME/micromamba/envs/aws/bin/python'
+
+    -- Configure virtual text for debugging
+    require('nvim-dap-virtual-text').setup {
+      enabled = true, -- Enable virtual text
+      enabled_commands = true, -- Enable commands like :DapVirtualTextEnable
+      highlight_changed_variables = true, -- Highlight changed variables
+      highlight_new_as_changed = false, -- Don’t treat new variables as changed
+      show_stop_reason = true, -- Show why execution stopped
+      commented = false, -- Don’t prefix with comment symbols
+      only_first_definition = true, -- Show only first definition of variables
+      all_references = false, -- Don’t show all references
+    }
   end,
 }

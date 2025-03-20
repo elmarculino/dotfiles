@@ -4,5 +4,3 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 eval $(/opt/homebrew/bin/brew shellenv)
-
-. "$HOME/.cargo/env"

@@ -1,0 +1,21 @@
+[font]
+size = 17
+
+[font.bold]
+family = "MonoLisa Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "MonoLisa Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "MonoLisa Nerd Font Mono"
+style = "Regular Italic"
+
+[font.normal]
+family = "MonoLisa Nerd Font Mono"
+style = "Regular"
+
+[window]
+opacity = 0.95

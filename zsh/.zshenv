@@ -1,7 +1,6 @@
 typeset -U PATH path
 
 export LC_CTYPE=pt_BR.UTF-8
-export SUDO_ASKPASS="$HOME/.local/bin/dpass"
 
 # Other XDG paths
 export XDG_DATA_HOME=${XDG_DATA_HOME:="$HOME/.local/share"}
@@ -23,6 +22,3 @@ export COLORTERM="truecolor"
 export OPENER="xdg-open"
 export PAGER="less"
 export WM="bspwm"
-
-
-. "$HOME/.cargo/env"

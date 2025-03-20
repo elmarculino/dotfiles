@@ -6,9 +6,6 @@ vim.keymap.set('n', '<S-Down>', ':resize +2<CR>', { silent = true })
 vim.keymap.set('n', '<S-Left>', ':vertical resize -2<CR>', { silent = true })
 vim.keymap.set('n', '<S-Right>', ':vertical resize +2<CR>', { silent = true })
 
--- Clear highlights
-vim.keymap.set('n', '<leader>h', '<cmd>nohlsearch<CR>', { silent = true })
-
 -- Better paste
 vim.keymap.set('v', 'p', 'P', { silent = true })
 
@@ -23,7 +20,16 @@ vim.keymap.set('v', '>', '>gv', { silent = true })
 
 -- Plugins --
 -- Lsp
-vim.keymap.set('n', '<leader>cf', '<cmd>lua vim.lsp.buf.format{ async = true }<cr>', { desc = '[F]format', silent = true })
+vim.keymap.set('n', '<leader>fb', '<cmd>lua vim.lsp.buf.format{ async = true }<cr>', { desc = '[F]ormat [B]uffer', silent = true })
+
+local function format_list()
+  vim.cmd [[
+    %s/\(\d\+\)/\1,/g | v/\S/d | %join
+    execute 'normal $x' | execute 'normal ggVGYY'
+	]]
+end
+
+vim.keymap.set('n', '<leader>fl', format_list, { desc = '[F]ormat [L]ist' })
 
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
@@ -37,7 +43,10 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics in location list' })
+vim.keymap.set('n', '<leader>de', function()
+  vim.diagnostic.setloclist { severity = vim.diagnostic.severity.ERROR }
+end, { desc = 'Errors only in location list' })
 
 -- vim.keymap.set('n', '∆', [[:echo "Alt-j pressed"<CR>]], { noremap = true, silent = true })
 -- Move Lines
@@ -62,7 +71,10 @@ vim.keymap.set({ 'i', 'n' }, '<esc>', '<cmd>noh<cr><esc>', { desc = 'Escape and 
 
 -- Clear search, diff update and redraw
 -- taken from runtime/lua/_editor.lua
-vim.keymap.set('n', '<leader>ur', '<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>', { desc = 'Redraw / clear hlsearch / diff update' })
+vim.keymap.set('n', '<leader>su', '<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>', { desc = 'Redraw / clear hlsearch / diff update' })
+
+-- Clear highlights
+vim.keymap.set('n', '<leader>sc', ':nohlsearch<CR>', { desc = 'Clear search highlights' })
 
 vim.keymap.set({ 'n', 'x' }, 'gw', '*N', { desc = 'Search word under cursor' })
 
@@ -81,7 +93,7 @@ vim.keymap.set('n', '<leader>xl', '<cmd>lopen<cr>', { desc = 'Location List' })
 vim.keymap.set('n', '<leader>xq', '<cmd>copen<cr>', { desc = 'Quickfix List' })
 
 -- quit
-vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
+vim.keymap.set('n', '<leader>Q', '<cmd>qa<cr>', { desc = 'Quit all' })
 
 -- Terminal Mappings
 vim.keymap.set('t', '<esc><esc>', '<c-\\><c-n>', { desc = 'Enter Normal Mode' })
@@ -95,15 +107,6 @@ vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>')
 vim.keymap.set('n', '<leader>z', '<cmd>ZenMod<CR>', { desc = 'Open [Z]enMod' })
 
 -- vim.cmd([[%s/\(\d\+\)/\1,/g | v/\S/d | %join]])
-
-local function format_list()
-  vim.cmd [[
-    %s/\(\d\+\)/\1,/g | v/\S/d | %join
-    execute 'normal $x' | execute 'normal ggVGYY'
-	]]
-end
-
-vim.keymap.set('n', '<leader>fl', format_list, { desc = 'Format List' })
 
 -- Keybinds to make split navigation easier.
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })

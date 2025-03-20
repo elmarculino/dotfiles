@@ -85,7 +85,7 @@ alias pars="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | a
 alias pacr="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
 alias p="pacman -Q | fzf"
 alias wifi="nmtui-connect"
-alias ls="exa --color=auto --icons"
+alias ls="eza --color=auto --icons"
 alias l="ls -l"
 alias la="ls -a"
 alias lla="ls -la"
@@ -93,47 +93,14 @@ alias lt="ls --tree"
 alias cat="bat --color always --plain"
 alias grep='grep --color=auto'
 alias t="tmux"
-alias ta="tmux a"
+alias ta="tmux a -t"
+alias tls="tmux ls"
+alias tn="tmux new -t"
 alias duf="du -sh * | sort -hr"
 alias conda="micromamba"
 alias vim="nvim"
-
-# Fasd aliases
-alias a='fasd -a'        # any
-alias s='fasd -si'       # show / search / select
-alias f='fasd -f'        # file
-alias sd='fasd -sid'     # interactive directory selection
-alias sf='fasd -sif'     # interactive file selection
-alias zz='fasd_cd -d -i' # cd with interactive selection
-
-alias d >/dev/null && unalias d
-alias v >/dev/null && unalias v
-alias vd >/dev/null && unalias vd
-alias z >/dev/null && unalias z
-
-function d { folder=$(fasd -dR | awk '{print $2}' | fzf) && cd "$folder" }
-function vv { file=$(fasd -fR | awk '{print $2}' | fzf) && nvim "$file" }
-
-# edit given file or search in recently used files
-function v {
-    local file
-    test -e "$1" && $EDITOR "$@" && return
-    file=$(fasd -Rfl "$*" | fzf) && $EDITOR "${file}" || $EDITOR "$@"
-}
-
-# cd into the directory containing a recently used file
-function vd {
-    local dir
-    local file
-    file=$(fasd -Rfl "$*" | fzf) && dir=$(dirname "$file") && cd "$dir"
-}
-
-# cd into given dir or search in recently used dirs
-function z {
-    [ $# -eq 1 ] && test -d "$1" && cd "$1" && return
-    local dir
-    dir=$(fasd -Rdl "$*" | fzf) && cd "${dir}" || return 1
-}
+alias cd='z'
+alias cdi='zi'
 
 docker_prune() { docker system prune --volumes -fa }
 
@@ -202,9 +169,6 @@ export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --inline-info"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-eval "$(fasd --init auto)"
-eval "$(thefuck --alias)"
-eval "$(fnm env --use-on-cd)"
 
 export NODE_PATH=$(npm root -g)
 
@@ -220,11 +184,6 @@ fp() {
         )" &&
     zathura "$file" > /dev/null &
 }
-
-source $HOME/.config/broot/launcher/bash/br
-#source ~/.zsh/fsh/fast-syntax-highlighting.plugin.zsh
-alias k=kubectl
-compdef __start_kubectl k
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
@@ -243,6 +202,15 @@ fi
 unset __mamba_setup
 # <<< mamba initialize <<<
 
+alias k=kubectl
+compdef __start_kubectl k
+
+source $HOME/.config/broot/launcher/bash/br
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(zoxide init zsh)"
+eval "$(thefuck --alias)"
+eval "$(fnm env --use-on-cd)"
 
 
-source /Users/msoares/.config/broot/launcher/bash/br

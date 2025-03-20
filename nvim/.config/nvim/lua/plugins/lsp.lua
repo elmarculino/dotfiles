@@ -32,21 +32,21 @@ return {
 
       local servers = {
         bashls = true,
-        gopls = {
-          settings = {
-            gopls = {
-              hints = {
-                assignVariableTypes = true,
-                compositeLiteralFields = true,
-                compositeLiteralTypes = true,
-                constantValues = true,
-                functionTypeParameters = true,
-                parameterNames = true,
-                rangeVariableTypes = true,
-              },
-            },
-          },
-        },
+        -- gopls = {
+        --   settings = {
+        --     gopls = {
+        --       hints = {
+        --         assignVariableTypes = true,
+        --         compositeLiteralFields = true,
+        --         compositeLiteralTypes = true,
+        --         constantValues = true,
+        --         functionTypeParameters = true,
+        --         parameterNames = true,
+        --         rangeVariableTypes = true,
+        --       },
+        --     },
+        --   },
+        -- },
         lua_ls = true,
         pyright = true,
         rust_analyzer = true,
@@ -54,7 +54,7 @@ return {
         cssls = true,
 
         -- Probably want to disable formatting for this lang server
-        tsserver = true,
+        ts_ls = true,
 
         jsonls = {
           settings = {
@@ -91,7 +91,7 @@ return {
       local ensure_installed = {
         'stylua',
         'lua_ls',
-        'delve',
+        -- 'delve',
         'sqlfluff',
         -- "tailwind-language-server",
       }
